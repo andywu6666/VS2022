@@ -16,9 +16,14 @@ string::string( const value_type * const ptr, const size_type count )
    myData.mySize = count;
    myData.myRes = ( myData.mySize / 16 ) * 16 + 15;
 
+   if (myData.myRes > 15) {
+       myData.bx.ptr = new value_type[count + 1];
 
+       for (int i = 0; i < count; i++)
+           myData.myPtr()[i] = ptr[i];
+   }
 
-
+   myData.myPtr()[count] = value_type();
 
 }
 
@@ -30,13 +35,13 @@ string::string( const size_type count, const value_type ch )
    myData.myRes = ( myData.mySize / 16 ) * 16 + 15;
 
    if (myData.myRes > 15) {
-       myData.bx.ptr = new value_type[myData.myRes];
+       myData.bx.ptr = new value_type[count + 1];
 
-       for (int i = 0; i < myData.mySize; i++)
+       for (int i = 0; i < count; i++)
            myData.myPtr()[i] = ch;
    }
 
-   myData.myPtr()[myData.mySize] = value_type();
+   myData.myPtr()[count] = value_type();
 
 
 
@@ -82,9 +87,9 @@ string& string::operator=( const string &right )
          if( myData.myRes < ( right.myData.mySize / 16 ) * 16 + 15 )
             myData.myRes = ( right.myData.mySize / 16 ) * 16 + 15;
 
-         myData.bx.ptr = new value_type[myData.myRes];
+         myData.bx.ptr = new value_type[myData.myRes + 1];
       }
-      for (int i = 0; i < myData.mySize; i++) {
+      for (int i = 0; i < right.myData.mySize + 1; i++) {
           myData.myPtr()[i] = right.myData.myPtr()[i];
       }
 
@@ -111,17 +116,17 @@ string& string::operator=( const value_type * const ptr )
          if( myData.myRes < ( count / 16 ) * 16 + 15 )
             myData.myRes = ( count / 16 ) * 16 + 15;
 
-         myData.bx.ptr = new value_type[myData.myRes];
+         myData.bx.ptr = new value_type[count + 1];
       }
-      for (int i = 0; i < myData.mySize; i++) {
+      for (int i = 0; i < count; i++) {
           myData.myPtr()[i] = ptr[i];
       }
 
 
-
+      myData.myPtr()[myData.mySize] = value_type();
    }
 
-   myData.myPtr()[myData.mySize] = value_type();
+
 
    return *this;
 }
@@ -132,9 +137,11 @@ string& string::erase( size_t off, size_t count )
    {
       if( off + count < myData.mySize )
       {
-   
+          for (int i = off; i < count; i++) {
+              myData.myPtr()[i] = myData.myPtr()[i + count];
+       }
 
-
+          myData.mySize -= count;
       }
       else
          myData.mySize = off;
