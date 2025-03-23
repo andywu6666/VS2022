@@ -230,11 +230,12 @@ string string::substr( size_type off, size_type count ) const
       return string();
    else
    {
+       if (off + count > myData.mySize) {
+           count = myData.mySize - off;
 
+       }
 
-
-
-
+       return string(myData.myPtr() + off, count);
    }
 }
 
