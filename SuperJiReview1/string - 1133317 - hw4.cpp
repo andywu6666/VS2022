@@ -29,6 +29,15 @@ string::string( const size_type count, const value_type ch )
    myData.mySize = count;
    myData.myRes = ( myData.mySize / 16 ) * 16 + 15;
 
+   if (myData.myRes > 15) {
+       myData.bx.ptr = new value_type[myData.myRes];
+
+       for (int i = 0; i < myData.mySize; i++)
+           myData.myPtr()[i] = ch;
+   }
+
+   myData.myPtr()[myData.mySize] = value_type();
+
 
 
 
@@ -41,6 +50,13 @@ string::string( const string &right )
    myData.mySize = right.myData.mySize;
    myData.myRes = ( myData.mySize / 16 ) * 16 + 15;
 
+   if (myData.myRes > 15) {
+       myData.bx.ptr = new value_type[myData.myRes];
+
+       for (int i = 0; i < myData.mySize; i++)
+           myData.myPtr()[i] = right.myData.myPtr()[i];
+   }
+   myData.myPtr()[myData.mySize] = value_type();
 
 
 
@@ -66,10 +82,13 @@ string& string::operator=( const string &right )
          if( myData.myRes < ( right.myData.mySize / 16 ) * 16 + 15 )
             myData.myRes = ( right.myData.mySize / 16 ) * 16 + 15;
 
-
+         myData.bx.ptr = new value_type[myData.myRes];
+      }
+      for (int i = 0; i < myData.mySize; i++) {
+          myData.myPtr()[i] = right.myData.myPtr()[i];
       }
 
-
+      myData.myPtr()[myData.mySize] = value_type();
 
 
 
@@ -92,15 +111,17 @@ string& string::operator=( const value_type * const ptr )
          if( myData.myRes < ( count / 16 ) * 16 + 15 )
             myData.myRes = ( count / 16 ) * 16 + 15;
 
-
+         myData.bx.ptr = new value_type[myData.myRes];
       }
-
+      for (int i = 0; i < myData.mySize; i++) {
+          myData.myPtr()[i] = ptr[i];
+      }
 
 
 
    }
 
-
+   myData.myPtr()[myData.mySize] = value_type();
 
    return *this;
 }
@@ -111,7 +132,7 @@ string& string::erase( size_t off, size_t count )
    {
       if( off + count < myData.mySize )
       {
-
+   
 
 
       }
