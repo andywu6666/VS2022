@@ -92,7 +92,7 @@ public:
            myData.myEnd = myData.myFirst + size;
        }
 
-       myData.myFirst = myData.myLast = myData.myEnd = nullptr;
+
    }
 
    // Vector destructor
@@ -136,7 +136,7 @@ public:
 
          for (size_type j = pos; j < originalSize; j++)
          {
-             newArray[j + 1] = myData.myFirst[i];
+             newArray[j + 1] = myData.myFirst[j];
          }
 
          delete[] myFirst;
@@ -351,7 +351,16 @@ private:
 template< typename Ty >
 bool operator==( const vector< Ty > &left, const vector< Ty > &right )
 {
+    if (left.size() != right.size())
+        return false;
 
+    for (size_t i = 0; i < left.size(); ++i)
+    {
+        if (left[i] != right[i])
+            return false;
+    }
+
+    return true;
 
 
 }
