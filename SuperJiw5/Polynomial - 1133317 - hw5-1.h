@@ -4,7 +4,7 @@
 #include <cmath>
 using std::sqrt;
 
-#include "vector.h"
+#include "vector - 1133317 - hw5.h"
 
 // Represents a term of a polynomial
 template< typename T >

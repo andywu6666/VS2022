@@ -114,6 +114,7 @@ public:
       if( where < myData.myFirst || where > myData.myLast )
          return nullptr;
 
+      size_type pos = where - myFirst;
       size_type originalSize = size();
       size_type originalCapacity = capacity();
       if( originalSize == originalCapacity )
@@ -124,13 +125,39 @@ public:
          else
             newCapacity = originalCapacity * 3 / 2;
 
+         pointer newArray = new value_type[newCapacity]();
 
+         for (size_type i = 0; i < pos; i++)
+         {
+             newArray[i] = myData.myFirst[i];
+         }
 
+         newArray[pos] = val;
 
+         for (size_type j = pos; j < originalSize; j++)
+         {
+             newArray[j + 1] = myData.myFirst[i];
+         }
+
+         delete[] myFirst;
+
+         myData.myFirst = newArray;
+         myData.myLast = newArray + originalSize + 1;
+         myData.myEnd = newArray + newCapacity;
+
+         return myData.myFirst + pos;
       }
       else
       {
+          for (size_type i = originalSize; i > pos; i--)
+          {
+              myData.myFirst[i] = myData.myFirst[i - 1];
+          }
 
+          myData.myFirst[pos] = val;
+          myData.myLast++;
+
+          return myData.myFirst + pos;
 
 
       }
@@ -155,11 +182,16 @@ public:
             if( newCapacity < rightSize )
                newCapacity = rightSize;
 
-
+            myData.myFirst = new value_type[newCapacity]();
+            myData.myEnd = myData.myFirst + newCapacity;
 
          }
 
-
+         for (size_type i = 0; i < rightSize; i++
+         {
+             myData.myFirst[i] = right.myData.myFirst[i];
+         }
+         myData.myLast = myData.myFirst + rightSize;
 
       }
 
@@ -174,10 +206,20 @@ public:
       if( where < myData.myFirst || where >= myData.myLast )
          return nullptr;
 
+      size_type pos = where - myData.myFirst;
+      size_type originalSize = size();
+      for (size_type i = pos; i < originalSize; i++)
+      {
+          myData.myFirst[i] = myData.myFirst[i + 1];
+      }
+      myData.myLast--;
+      
 
 
 
-      return const_cast< iterator >( where );
+
+     // return const_cast< iterator >( where );
+      return myData.myFirst + pos;
    }
 
    // Removes all elements from the vector (which are destroyed),
