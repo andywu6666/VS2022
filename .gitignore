@@ -5,3 +5,17 @@
 /SuperJiw5/Polynomials - long long.dat
 /SuperJiw5/Polynomials - long.dat
 /SuperJiw5/Polynomials - short.dat
+
+# 1. 忽略所有內容 (檔案和資料夾)
+*
+
+# 2. 但是，不要忽略資料夾本身 (這樣 Git 才能進入資料夾檢查裡面的檔案)
+#    注意：結尾的 / 很重要，表示只匹配資料夾
+!*/
+
+# 3. 接著，明確指定不要忽略 .cpp 和 .h 檔案
+!*.cpp
+!*.h
+
+# 4. 最後，不要忽略 .gitignore 文件本身，這樣它才能被版本控制
+!.gitignore
