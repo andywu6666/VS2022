@@ -68,7 +68,7 @@ public:
       {
          myData.myFirst = new value_type[ count ]();
 
-         for (int i = 0; i < count; i++)
+         for (size_t i = 0; i < count; i++)
              myData.myFirst[i] = 0;
          myData.myLast = myData.myFirst + count;
          myData.myEnd = myData.myFirst + count;
@@ -86,7 +86,7 @@ public:
        if (size != 0) 
        {
            myData.myFirst = new value_type[ size ];
-           for (int i = 0; i < size ; i++ )
+           for (size_t i = 0; i < size ; i++ )
                myData.myFirst[i] = right.myData.myFirst[i];
            myData.myLast = myData.myFirst + size;
            myData.myEnd = myData.myFirst + size;
@@ -114,7 +114,7 @@ public:
       if( where < myData.myFirst || where > myData.myLast )
          return nullptr;
 
-      size_type pos = where - myFirst;
+      size_type pos = where - myData.myFirst;
       size_type originalSize = size();
       size_type originalCapacity = capacity();
       if( originalSize == originalCapacity )
@@ -139,7 +139,7 @@ public:
              newArray[j + 1] = myData.myFirst[j];
          }
 
-         delete[] myFirst;
+         delete[] myData.myFirst;
 
          myData.myFirst = newArray;
          myData.myLast = newArray + originalSize + 1;
@@ -187,7 +187,7 @@ public:
 
          }
 
-         for (size_type i = 0; i < rightSize; i++
+         for (size_type i = 0; i < rightSize; i++)
          {
              myData.myFirst[i] = right.myData.myFirst[i];
          }
