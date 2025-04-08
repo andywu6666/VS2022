@@ -8,7 +8,7 @@ using std::ifstream;
 using std::ios;
 
 #include "Polynomial - 1133317 - hw5-1.h"
-#include "Polynomial - 1133317 - hw5-2.h"
+//#include "Polynomial - 1133317 - hw5-2.h"
 
 template< typename T >
 void testPolynomial();
