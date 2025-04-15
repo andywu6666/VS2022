@@ -72,10 +72,22 @@ public:
    list( size_type count ) // construct list from count * Ty()
       : myData()
    {
-      myData.myHead = new node;
-      myData.myHead->myVal = Ty();
-      myData.myHead->prev = myData.myHead->next = myData.myHead;
+       myData.myHead = new node;
+       myData.myHead->myVal = Ty();
+       myData.myHead->prev = myData.myHead->next = myData.myHead;
 
+       for (size_type i = 0; i < count; ++i)
+       {
+           nodePtr newNode = new node;
+           newNode->myVal = Ty(); 
+
+           newNode->prev = myData.myHead->prev; 
+           newNode->next = myData.myHead;
+           myData.myHead->prev->next = newNode;
+           myData.myHead->prev = newNode;
+
+           myData.mySize++;
+       }
 
 
 
@@ -92,7 +104,23 @@ public:
       myData.myHead->myVal = Ty();
       myData.myHead->prev = myData.myHead->next = myData.myHead;
 
+      myData.myHead = new node;
+      myData.myHead->myVal = Ty();
+      myData.myHead->prev = myData.myHead->next = myData.myHead;
 
+
+      for (const_iterator it = right.begin(); it != right.end(); it = it->next)
+      {
+          nodePtr newNode = new node;
+          newNode->myVal = it->myVal;
+
+          newNode->prev = myData.myHead->prev;
+          newNode->next = myData.myHead;
+          myData.myHead->prev->next = newNode;
+          myData.myHead->prev = newNode;
+
+          myData.mySize++;
+      }
 
 
 
