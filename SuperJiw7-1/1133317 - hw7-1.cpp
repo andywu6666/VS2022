@@ -423,7 +423,7 @@ public:
        // 從最高位比較
        typename T::const_iterator it1 = integer.end() - 1;
        typename T::const_iterator it2 = right.integer.end() - 1;
-       for (; it1 != integer.begin() - 1; --it1, --it2)
+       for (; it1 >= integer.begin(); --it1, --it2)
        {
            if (*it1 != *it2)
                return *it1 < *it2;
@@ -447,6 +447,28 @@ public:
          return zero;
 
       HugeInteger difference( *this );
+      typename T::iterator it1 = difference.integer.begin();
+      typename T::const_iterator it2 = op2.integer.begin();
+      int borrow = 0;
+      for (; it1 != difference.integer.end(); ++it1)
+      {
+          int digit1 = *it1;
+          int digit2 = (it2 != op2.integer.end()) ? *it2 : 0;
+          int diff = digit1 - digit2 - borrow;
+          if (diff < 0)
+          {
+              diff += 10;
+              borrow = 1;
+          }
+          else
+              borrow = 0;
+          *it1 = diff;
+          if (it2 != op2.integer.end())
+              ++it2;
+      }
+      // 去除高位多餘的 0
+      while (difference.integer.size() > 1 && *(difference.integer.end() - 1) == 0)
+          difference.integer.erase(difference.integer.end() - 1);
 
 
 
@@ -499,13 +521,13 @@ public:
       HugeInteger remainder(dividend.integer.size());
 
       // 先將 remainder 設為 0
-      for (typename T::size_type i = 0; i < remainder.integer.size(); ++i)
+      for (size_t i = 0; i < remainder.integer.size(); ++i)
           *(remainder.integer.begin() + i) = 0;
 
-      for (typename T::difference_type i = dividend.integer.size() - 1; i >= 0; --i)
+      for (size_t i = dividend.integer.size(); i-- > 0; )
       {
           // 將一位數字移到高位
-          for (typename T::difference_type j = remainder.integer.size() - 1; j > 0; --j)
+          for (size_t j = remainder.integer.size() - 1; j > 0; --j) //WARNING OUT OF RANGE
               *(remainder.integer.begin() + j) = *(remainder.integer.begin() + j - 1);
           *(remainder.integer.begin() + 0) = *(dividend.integer.begin() + i);
 
