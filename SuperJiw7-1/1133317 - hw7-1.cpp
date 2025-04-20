@@ -353,7 +353,7 @@ bool operator==( const vector< Ty > &left, const vector< Ty > &right )
 
     for (size_t i = 0; i < left.size(); ++i)
     {
-        if (left[i] != right[i])
+        if (*(left.begin() + i) != *(right.begin() + i) )
             return false;
     }
 
@@ -417,8 +417,18 @@ public:
    // function that tests if one HugeInteger is less than another
    bool operator<( HugeInteger &right )
    {
+       if (integer.size() != right.integer.size())
+           return integer.size() < right.integer.size();
 
-
+       // 從最高位比較
+       typename T::const_iterator it1 = integer.end() - 1;
+       typename T::const_iterator it2 = right.integer.end() - 1;
+       for (; it1 != integer.begin() - 1; --it1, --it2)
+       {
+           if (*it1 != *it2)
+               return *it1 < *it2;
+       }
+       return false; // 完全相等，不小於
 
    } // end function operator<
 
@@ -460,7 +470,7 @@ public:
          return zero;
 
       HugeInteger product( integer.size() + op2.integer.size() );
-
+     // product = integer * op2.integer;
 
 
       if( product.leadingZero() )
@@ -483,7 +493,35 @@ public:
       if( *this < op2 )
          return zero;
 
+      HugeInteger dividend = *this;
+      HugeInteger divisor = op2;
+      HugeInteger quotient(dividend.integer.size());
+      HugeInteger remainder(dividend.integer.size());
 
+      // 先將 remainder 設為 0
+      for (typename T::size_type i = 0; i < remainder.integer.size(); ++i)
+          *(remainder.integer.begin() + i) = 0;
+
+      for (typename T::difference_type i = dividend.integer.size() - 1; i >= 0; --i)
+      {
+          // 將一位數字移到高位
+          for (typename T::difference_type j = remainder.integer.size() - 1; j > 0; --j)
+              *(remainder.integer.begin() + j) = *(remainder.integer.begin() + j - 1);
+          *(remainder.integer.begin() + 0) = *(dividend.integer.begin() + i);
+
+          // 計算當前位數的商
+          int count = 0;
+          while (!(remainder < divisor))
+          {
+              remainder = remainder - divisor;
+              count++;
+          }
+          *(quotient.integer.begin() + i) = count;
+      }
+
+      // 去除高位多餘的 0
+      while (quotient.integer.size() > 1 && *(quotient.integer.end() - 1) == 0)
+          quotient.integer.erase(quotient.integer.end() - 1);
 
       return quotient;
    } // end function operator/
