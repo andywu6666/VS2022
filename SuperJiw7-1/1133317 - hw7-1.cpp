@@ -84,7 +84,7 @@ public:
    vector( const vector &right )
       : myData()
    {
-       size_t size = right.myData.myLast - right.myData.myFirst;
+       size_type size = right.myData.myLast - right.myData.myFirst;
        if (size != 0)
        {
            myData.myFirst = new value_type[size];
