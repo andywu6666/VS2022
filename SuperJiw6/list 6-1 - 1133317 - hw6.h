@@ -88,10 +88,7 @@ public:
 
            myData.mySize++;
        }
-
-
-
-
+       
    }
 
    // copy constructor
@@ -103,11 +100,6 @@ public:
       myData.myHead = new node;
       myData.myHead->myVal = Ty();
       myData.myHead->prev = myData.myHead->next = myData.myHead;
-
-      myData.myHead = new node;
-      myData.myHead->myVal = Ty();
-      myData.myHead->prev = myData.myHead->next = myData.myHead;
-
 
       for (const_iterator it = right.begin(); it != right.end(); it = it->next)
       {
@@ -121,8 +113,6 @@ public:
 
           myData.mySize++;
       }
-
-
 
    }
 
