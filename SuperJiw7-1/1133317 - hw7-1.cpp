@@ -420,7 +420,6 @@ public:
        if (integer.size() != right.integer.size())
            return integer.size() < right.integer.size(); 
 
-       // 從最高位比較
        typename T::const_iterator it1 = integer.end() - 1;
        typename T::const_iterator it2 = right.integer.end() - 1;
        for (; it1 >= integer.begin(); --it1, --it2)
@@ -428,7 +427,7 @@ public:
            if (*it1 != *it2)
                return *it1 < *it2;
        }
-       return false; // 完全相等，不小於
+       return false; 
 
    } // end function operator<
 
@@ -466,7 +465,7 @@ public:
           if (it2 != op2.integer.end())
               ++it2;
       }
-      // 去除高位多餘的 0
+
       while (difference.integer.size() > 1 && *(difference.integer.end() - 1) == 0)
           difference.integer.erase(difference.integer.end() - 1);
 
@@ -491,23 +490,18 @@ public:
       if( isZero() || op2.isZero() )
          return zero;
 
-      // copy inputs into separate HugeInteger objects
       HugeInteger multiplicand(*this);
       HugeInteger multiplier(op2);
 
-      // digit counts
       size_type n1 = multiplicand.integer.size();
       size_type n2 = multiplier.integer.size();
 
-      // allocate product with maximal possible length
       HugeInteger product(static_cast<unsigned int>(n1 + n2));
 
-      // raw pointers into digit arrays
       typename T::iterator p = product.integer.begin();
       typename T::const_iterator a = multiplicand.integer.begin();
       typename T::const_iterator b = multiplier.integer.begin();
 
-      // schoolbook multiplication
       for (size_type i = 0; i < n1; ++i) {
           int carry = 0;
           for (size_type j = 0; j < n2; ++j) {
@@ -518,7 +512,6 @@ public:
           *(p + i + n2) = carry;
       }
 
-      // remove leading zeros (highest-order)
       while (product.integer.size() > 1 && product.integer.back() == 0)
           product.integer.erase(product.integer.end() - 1);
 
@@ -542,27 +535,21 @@ public:
       if( *this < op2 )
          return zero;
 
-      // initialize dividend, divisor, remainder
       HugeInteger dividend(*this);
       HugeInteger divisor(op2);
       HugeInteger remainder = dividend;
 
-      // sizes of operand digit arrays
       size_type dividendSize = dividend.integer.size();
       size_type divisorSize = divisor.integer.size();
 
-      // compute initial shift amount
       int shift = static_cast<int>(dividendSize) - static_cast<int>(divisorSize);
 
-      // create buffer = divisor * 10^shift
       HugeInteger buffer(divisor);
       for (int i = 0; i < shift; ++i)
           buffer.integer.insert(buffer.integer.begin(), 0);
 
-      // determine quotient size and adjust buffer if too large
       int quotientSize;
       if (dividend < buffer) {
-          // shift buffer right by one position (divide by 10)
           buffer.integer.erase(buffer.integer.begin());
           quotientSize = shift;
       }
@@ -570,11 +557,9 @@ public:
           quotientSize = shift + 1;
       }
 
-      // initialize quotient digits to zero
       HugeInteger quotient(static_cast<unsigned int>(quotientSize));
       typename T::iterator quotPtr = quotient.integer.begin();
 
-      // compute each quotient digit
       for (int k = quotientSize - 1; k >= 0; --k) {
           while (!(remainder < buffer)) {
               remainder = remainder - buffer;
@@ -582,7 +567,7 @@ public:
               if (remainder.isZero())
                   return quotient;
           }
-          // shift buffer right by one position
+
           buffer.integer.erase(buffer.integer.begin());
       }
       return quotient;
