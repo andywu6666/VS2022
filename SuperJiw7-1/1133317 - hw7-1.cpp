@@ -418,7 +418,7 @@ public:
    bool operator<( HugeInteger &right )
    {
        if (integer.size() != right.integer.size())
-           return integer.size() < right.integer.size();
+           return integer.size() < right.integer.size(); 
 
        // 從最高位比較
        typename T::const_iterator it1 = integer.end() - 1;
@@ -491,9 +491,36 @@ public:
       if( isZero() || op2.isZero() )
          return zero;
 
-      HugeInteger product( integer.size() + op2.integer.size() );
-     // product = integer * op2.integer;
+      // copy inputs into separate HugeInteger objects
+      HugeInteger multiplicand(*this);
+      HugeInteger multiplier(op2);
 
+      // digit counts
+      size_type n1 = multiplicand.integer.size();
+      size_type n2 = multiplier.integer.size();
+
+      // allocate product with maximal possible length
+      HugeInteger product(static_cast<unsigned int>(n1 + n2));
+
+      // raw pointers into digit arrays
+      typename T::iterator p = product.integer.begin();
+      typename T::const_iterator a = multiplicand.integer.begin();
+      typename T::const_iterator b = multiplier.integer.begin();
+
+      // schoolbook multiplication
+      for (size_type i = 0; i < n1; ++i) {
+          int carry = 0;
+          for (size_type j = 0; j < n2; ++j) {
+              int sum = *(p + i + j) + (*(a + i)) * (*(b + j)) + carry;
+              *(p + i + j) = sum % 10;
+              carry = sum / 10;
+          }
+          *(p + i + n2) = carry;
+      }
+
+      // remove leading zeros (highest-order)
+      while (product.integer.size() > 1 && product.integer.back() == 0)
+          product.integer.erase(product.integer.end() - 1);
 
       if( product.leadingZero() )
          cout << "product has a leading zero!\n";
