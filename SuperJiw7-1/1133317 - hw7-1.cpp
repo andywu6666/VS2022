@@ -542,38 +542,51 @@ public:
       if( *this < op2 )
          return zero;
 
-      HugeInteger dividend = *this;
-      HugeInteger divisor = op2;
-      HugeInteger quotient(dividend.integer.size());
-      HugeInteger remainder(dividend.integer.size());
+      // initialize dividend, divisor, remainder
+      HugeInteger dividend(*this);
+      HugeInteger divisor(op2);
+      HugeInteger remainder = dividend;
 
-      // 先將 remainder 設為 0
-      for (size_t i = 0; i < remainder.integer.size(); ++i)
-          *(remainder.integer.begin() + i) = 0;
+      // sizes of operand digit arrays
+      size_type dividendSize = dividend.integer.size();
+      size_type divisorSize = divisor.integer.size();
 
-      for (size_t i = dividend.integer.size(); i-- > 0; )
-      {
-          // 將一位數字移到高位
-          for (size_t j = remainder.integer.size() - 1; j > 0; --j) //WARNING OUT OF RANGE
-              *(remainder.integer.begin() + j) = *(remainder.integer.begin() + j - 1);
-          *(remainder.integer.begin() + 0) = *(dividend.integer.begin() + i);
+      // compute initial shift amount
+      int shift = static_cast<int>(dividendSize) - static_cast<int>(divisorSize);
 
-          // 計算當前位數的商
-          int count = 0;
-          while (!(remainder < divisor))
-          {
-              remainder = remainder - divisor;
-              count++;
-          }
-          *(quotient.integer.begin() + i) = count;
+      // create buffer = divisor * 10^shift
+      HugeInteger buffer(divisor);
+      for (int i = 0; i < shift; ++i)
+          buffer.integer.insert(buffer.integer.begin(), 0);
+
+      // determine quotient size and adjust buffer if too large
+      int quotientSize;
+      if (dividend < buffer) {
+          // shift buffer right by one position (divide by 10)
+          buffer.integer.erase(buffer.integer.begin());
+          quotientSize = shift;
+      }
+      else {
+          quotientSize = shift + 1;
       }
 
-      // 去除高位多餘的 0
-      while (quotient.integer.size() > 1 && *(quotient.integer.end() - 1) == 0)
-          quotient.integer.erase(quotient.integer.end() - 1);
+      // initialize quotient digits to zero
+      HugeInteger quotient(static_cast<unsigned int>(quotientSize));
+      typename T::iterator quotPtr = quotient.integer.begin();
 
+      // compute each quotient digit
+      for (int k = quotientSize - 1; k >= 0; --k) {
+          while (!(remainder < buffer)) {
+              remainder = remainder - buffer;
+              quotPtr[k]++;
+              if (remainder.isZero())
+                  return quotient;
+          }
+          // shift buffer right by one position
+          buffer.integer.erase(buffer.integer.begin());
+      }
       return quotient;
-   } // end function operator/
+   } 
 
    // modulus operator; HugeInteger % HugeInteger
    // provided that the op2 is not equal to 0
