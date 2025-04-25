@@ -493,24 +493,25 @@ public:
       HugeInteger multiplicand(*this);
       HugeInteger multiplier(op2);
 
-      size_type n1 = multiplicand.integer.size();
-      size_type n2 = multiplier.integer.size();
+      size_type multiplicandSize = multiplicand.integer.size();
+      size_type multiplierSize = multiplier.integer.size();
 
-      HugeInteger product(static_cast<unsigned int>(n1 + n2));
+      HugeInteger product(static_cast<unsigned int>(multiplicandSize + multiplierSize) );
 
-      typename T::iterator p = product.integer.begin();
-      typename T::const_iterator a = multiplicand.integer.begin();
-      typename T::const_iterator b = multiplier.integer.begin();
+      typename T::iterator itProduct = product.integer.begin();
+      typename T::const_iterator itMultiplicand = multiplicand.integer.begin();
+      typename T::const_iterator itMultiplier = multiplier.integer.begin();
 
-      for (size_type i = 0; i < n1; ++i) {
+      for (size_type i = 0; i < multiplicandSize; i++) {
           int carry = 0;
-          for (size_type j = 0; j < n2; ++j) {
-              int sum = *(p + i + j) + (*(a + i)) * (*(b + j)) + carry;
-              *(p + i + j) = sum % 10;
+          for (size_type j = 0; j < multiplierSize; j++) {
+               int sum = *(itProduct + i + j) + (*(itMultiplicand + i)) * (*(itMultiplier + j)) + carry;
+              *(itProduct + i + j) = sum % 10;
               carry = sum / 10;
           }
-          *(p + i + n2) = carry;
-      }
+          *(itProduct + i + multiplierSize) = carry;
+     }
+
 
       while (product.integer.size() > 1 && product.integer.back() == 0)
           product.integer.erase(product.integer.end() - 1);
