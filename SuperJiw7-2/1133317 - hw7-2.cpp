@@ -189,6 +189,7 @@ public:
                    myData.myHead->prev = lastNodeToKeep;
                }
 
+
                myData.mySize = right.myData.mySize;
 
 

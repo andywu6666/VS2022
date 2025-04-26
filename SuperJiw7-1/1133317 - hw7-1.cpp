@@ -486,41 +486,48 @@ public:
    // multiplication operator; HugeInteger * HugeInteger
    HugeInteger operator*( HugeInteger &op2 )
    {
-      HugeInteger zero;
-      if( isZero() || op2.isZero() )
-         return zero;
+       HugeInteger zero;
+       if (isZero() || op2.isZero())
+           return zero;
 
-      HugeInteger multiplicand(*this);
-      HugeInteger multiplier(op2);
-      HugeInteger product(static_cast<unsigned int>(multiplicandSize + multiplierSize));
+       // 複製兩個操作數
+       HugeInteger A(*this), B(op2);
 
-      size_type multiplicandSize = multiplicand.integer.size();
-      size_type multiplierSize = multiplier.integer.size();
+       // 位數
+       size_type n1 = A.integer.size();
+       size_type n2 = B.integer.size();
 
-     
+       // 結果長度 = n1 + n2
+       HugeInteger product(static_cast<unsigned int>(n1 + n2));
 
-      typename T::iterator itProduct = product.integer.begin();
-      typename T::const_iterator itMultiplicand = multiplicand.integer.begin();
-      typename T::const_iterator itMultiplier = multiplier.integer.begin();
+       // 2) 雙重迴圈：A 的第 i 位 * B 的第 j 位，累加到 product[i+j]
+       for (size_type i = 0; i < n1; ++i) {
+           for (size_type j = 0; j < n2; ++j) {
+               // 用 iterator 訪問
+               typename T::iterator itA = A.integer.begin() + i;
+               typename T::iterator itB = B.integer.begin() + j;
+               typename T::iterator itP = product.integer.begin() + (i + j);
+               *itP += (*itA) * (*itB);
+           }
+       }
 
-      for (size_type i = 0; i < multiplicandSize; i++) {
-          int carry = 0;
-          for (size_type j = 0; j < multiplierSize; j++) {
-               int sum = *(itProduct + i + j) + (*(itMultiplicand + i)) * (*(itMultiplier + j)) + carry;
-              *(itProduct + i + j) = sum % 10;
-              carry = sum / 10;
-          }
-          *(itProduct + i + multiplierSize) = carry;
-     }
+       // 3) 統一處理進位
+       for (size_type k = 0; k < n1 + n2 - 1; ++k) {
+           typename T::iterator itP = product.integer.begin() + k;
+           if (*itP >= 10) {
+               *(itP + 1) += *itP / 10;
+               *itP %= 10;
+           }
+       }
 
+       // 4) 刪除末端多餘的零
+       while (product.integer.size() > 1 && *(product.integer.end() - 1) == 0)
+           product.integer.erase(product.integer.end() - 1);
 
-      while (product.integer.size() > 1 && product.integer.back() == 0)
-          product.integer.erase(product.integer.end() - 1);
+       if (product.leadingZero())
+           cout << "product has a leading zero!\n";
 
-      if( product.leadingZero() )
-         cout << "product has a leading zero!\n";
-
-      return product;
+       return product;
    }
 
    // multiplication assignment operator; HugeInteger *= HugeInteger
