@@ -257,24 +257,24 @@ public:
          }
          else // the right list is not empty
          {
-            // typename list<Ty>::iterator  leftIt = *this->begin();
-            // typename list<Ty>::iterator rightIt = right->begin();
+            // typename list<Ty>::iterator  leftIt = *this->begin(); //delete
+            // typename list<Ty>::iterator rightIt = right->begin(); //delete
 
-          //   if (myData.mySize > right.myData.mySize)
+          //   if (myData.mySize > right.myData.mySize) //delete
          //    {
-            //     for (int i = 0; i < right.myData.mySize)
+            //     for (int i = 0; i < right.myData.mySize) //delete
           //       {
                      
           //       }
 
-         //        for (int i = myData.mySize; i > right.myData.mySize; i--)
+         //        for (int i = myData.mySize; i > right.myData.mySize; i--) //delete
          //        {
                      
           //       }
 
 
         //     }
-         //    else if (myData.mySize < right.myData.mySize)
+         //    else if (myData.mySize < right.myData.mySize) //delete
          //    {
                  nodePtr newNode = new node;
                  for (const_iterator it = right.begin(); it != right.end(); it++){ //modify
