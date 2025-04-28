@@ -221,21 +221,18 @@ public:
       myData.myHead->myVal = Ty();
       myData.myHead->prev = myData.myHead->next = myData.myHead;
 
-      if( count > 0 )
-      {
-          for (int i = 0; i < count; i++) {
+      myData.mySize = count;
+
+      if (count > 0) {
+          while (count--) {
               nodePtr newNode = new node;
-              newNode->myVal = Ty();
-              newNode->next = myData.myHead;
+
               newNode->prev = myData.myHead->prev;
+              newNode->next = myData.myHead;
               myData.myHead->prev->next = newNode;
               myData.myHead->prev = newNode;
-              myData.mySize++; //add
+              newNode->myVal = Ty();
           }
-
-
-
-
       }
    }
 
@@ -246,22 +243,30 @@ public:
       myData.myHead->myVal = Ty();
       myData.myHead->prev = myData.myHead->next = myData.myHead;
 
-      if( right.myData.mySize > 0 ) // right is not empty
+      myData.mySize = right.size();
+      size_t count = right.size();
+
+      if (right.myData.mySize > 0) // right is not empty
       {
-          for (const_iterator it = right.begin(); it != right.end(); it++) //modify
-          {
+          while (count--) {
               nodePtr newNode = new node;
-              newNode->myVal = *it; //modify
-              newNode->next = myData.myHead;
+
               newNode->prev = myData.myHead->prev;
+              newNode->next = myData.myHead;
               myData.myHead->prev->next = newNode;
               myData.myHead->prev = newNode;
-              myData.mySize++; //add
+              myData.myHead->myVal = Ty();
           }
 
+          nodePtr It = myData.myHead->next;
+          nodePtr rightIt = right.myData.myHead->next;
 
+          while (It != myData.myHead) {
+              It->myVal = rightIt->myVal;
 
-
+              It = It->next;
+              rightIt = rightIt->next;
+          }
       }
    }
 
@@ -282,38 +287,39 @@ public:
          }
          else // the right list is not empty
          {
-             if (myData.mySize > right.myData.mySize) //add
-             {
-                 for (int i = 0; i < myData.mySize - right.myData.mySize; i++) //add
-                 {
-                     myData.myHead->prev = myData.myHead->prev->prev; //add
-                     delete myData.myHead->prev->next; //add
-                     myData.myHead->prev->next = myData.myHead; //add
+             if (right.myData.mySize > myData.mySize) {
+                 int count = right.myData.mySize - myData.mySize;
+
+                 while (count--) {
+                     nodePtr newNode = new node;
+
+                     newNode->prev = myData.myHead->prev;
+                     newNode->next = myData.myHead;
+                     myData.myHead->prev->next = newNode;
+                     myData.myHead->prev = newNode;
+                     newNode->myVal = Ty();
                  }
-
-
              }
-             else if (myData.mySize < right.myData.mySize) //add
-             {
-                 for (int i = 0; i < right.myData.mySize - myData.mySize; i++) //add
-                 {
-                     nodePtr newNode = new node; //add
-                     newNode->myVal = Ty(); //add
-                     newNode->next = myData.myHead; //add
-                     newNode->prev = myData.myHead->prev; //add
-                     myData.myHead->prev->next = newNode; //add
-                     myData.myHead->prev = newNode; //add
+             else if (right.myData.mySize < myData.mySize) {
+                 int count = myData.mySize - right.myData.mySize;
+
+                 while (count--) {
+                     myData.myHead->prev = myData.myHead->prev->prev;
+                     delete myData.myHead->prev->next;
+
+                     myData.myHead->prev->next = myData.myHead;
                  }
-
-
-             }
-             nodePtr It = myData.myHead->next; //add
-             nodePtr rightIt = right.myData.myHead->next; //add
-             for (; It != myData.myHead; It = It->next, rightIt = rightIt->next) //add
-             {
-                 It->myVal = rightIt->myVal; //add
              }
 
+             nodePtr It = myData.myHead->next;
+             nodePtr rightIt = right.myData.myHead->next;
+
+             while (It != myData.myHead) {
+                 It->myVal = rightIt->myVal;
+
+                 It = It->next;
+                 rightIt = rightIt->next;
+             }
          }
 
          myData.mySize = right.myData.mySize;
@@ -354,22 +360,15 @@ public:
 
    void push_back( const Ty &val )
    {
-      /* myData.myHead = new node; //delete
-       myData.myHead->myVal = Ty(); //delete
-       myData.myHead->prev = myData.myHead->next = myData.myHead;*/ //delete
-
-
        nodePtr newNode = new node;
-       newNode->myVal = val;
-       newNode->next = myData.myHead;
+
        newNode->prev = myData.myHead->prev;
+       newNode->next = myData.myHead;
        myData.myHead->prev->next = newNode;
        myData.myHead->prev = newNode;
-       myData.mySize++; //add
+       newNode->myVal = val;
 
-
-
-
+       ++myData.mySize;
    }
 
    void clear() // erase all

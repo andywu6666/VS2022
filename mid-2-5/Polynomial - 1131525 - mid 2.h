@@ -89,56 +89,33 @@ public:
    void operator+=( Polynomial &op2 )
    {
       Polynomial sum;
-     // Polynomial addend(polynomial.size()); delete
-      
       T2 coefficient;
-      T2 exponenet;
-      typename T1::iterator it1 = polynomial.begin(); //modify
-      typename T1::iterator it2 = op2.polynomial.begin(); //modify
+      typename T1::iterator it1 = polynomial.begin();
+      typename T1::iterator it2 = op2.polynomial.begin();
 
-
-      for (; it1 != polynomial.end() && it2 != op2.polynomial.end(); ) //modify
-      {
-          if (it1->expon == it2->expon) //add
-          {
-              // sum += *it1 + *it2;
-              // sum.polynomial.coef = it1->coef + it2->coef; //delete
-              if ( (it1->coef + it2->coef) != 0) //add
-              sum.attach(it1->coef + it2->coef, it1->expon); //modify
-              it1++; it2++; //add
-          }
-          else if (it1->expon > it2->expon) //add
-          {
-              sum.attach(it1->coef, it1->expon); //add
-              it1++; //add
-          }
-          else //add
-          {
-              sum.attach(it2->coef, it2->expon); //add
-              it2++; //add
+      while (it1 != polynomial.end() && it2 != op2.polynomial.end()) {
+          if (it1->expon == it2->expon){
+              if( it1->coef + it2->coef != 0 ) sum.attach(it1->coef + it2->coef, it1->expon);
+              ++it1;
+              ++it2;
+          }else if (it1->expon > it2->expon) {
+              sum.attach(it1->coef, it1->expon);
+              ++it1;
+          }else {
+              sum.attach(it2->coef, it2->expon);
+              ++it2;
           }
       }
 
-      while (it1 != polynomial.end())
-      {
-          //sum += *it1;
-
-
-          sum.attach(it1->coef, it1->expon); //modify
-          it1++; //add
+      while (it1 != polynomial.end() ) {
+          sum.attach(it1->coef, it1->expon);
+          ++it1;
       }
-      while (it2 != op2.polynomial.end())
-      {
-          //sum += *it2;
 
-          sum.attach(it2->coef, it2->expon); //modify
-          it2++; //add
+      while (it2 != op2.polynomial.end()) {
+          sum.attach(it2->coef, it2->expon);
+          ++it2;
       }
-     /* while (polynomial.size() > 1 && polynomial.end() - 1 == 0) //delete
-      {
-          polynomial.erase(polynomial.end() - 1 ); //delete
-      }*/
-
 
       *this = sum;
    }
@@ -154,23 +131,23 @@ public:
    Polynomial operator*( Polynomial &op2 )
    {
       Polynomial product;
-      typename T1::iterator it2 = op2.polynomial.begin(); //modify
-      //int carry = 0; //delete
+      typename T1::iterator it2 = op2.polynomial.begin();
 
-      while (it2 != op2.polynomial.end()) { //add
-          Polynomial buffer; //add
-          typename T1::iterator it1 = polynomial.begin(); //add
-          while (it1 != polynomial.end()) { //add
-              buffer.attach(it1->coef * it2->coef, it1->expon + it2->expon); //add
-              ++it1; //add
+      while ( it2 != op2.polynomial.end() ) {
+          Polynomial buffer;
+          typename T1::iterator it1 = polynomial.begin();
+          while (it1 != polynomial.end()) {
+              buffer.attach(it1->coef * it2->coef, it1->expon + it2->expon);
+              ++it1;
           }
-          product += buffer; //add
-          ++it2; //add
+
+          // cout << "Before : " << product << "\n";
+          product += buffer;
+          // cout << "After  : " << product << "\n";
+          ++it2;
       }
-     /* while (polynomial.size() > 1 && polynomial.end() - 1 == 0) //delete
-      {
-          polynomial.erase(polynomial.end() - 1 ); //delete
-      }*/
+
+
 
       return product;
    }
@@ -184,7 +161,6 @@ public:
       Polynomial buffer;
       Polynomial remainder( *this );
 
-
       for (int i = 1; i * i <= remainder.polynomial.begin()->coef; ++i) {
           if (i * i == remainder.polynomial.begin()->coef) {
               monomial.polynomial.begin()->coef = i;
@@ -192,27 +168,29 @@ public:
       }
       monomial.polynomial.begin()->expon = remainder.polynomial.begin()->expon / 2;
 
-
+    
 
       squareRoot = monomial;
       divisor = monomial;
       buffer = squareRoot * divisor;
       remainder -= buffer;
 
-      while( !remainder.zero() )
-      {
-          (--divisor.polynomial.end())->coef *= 2; //add
+     
 
-          monomial.polynomial.begin()->coef //add
-              = remainder.polynomial.begin()->coef / divisor.polynomial.begin()->coef; //add
+      while( !remainder.zero() ){
+          (--divisor.polynomial.end())->coef *= 2;
+
+          monomial.polynomial.begin()->coef
+              = remainder.polynomial.begin()->coef / divisor.polynomial.begin()->coef;
 
           monomial.polynomial.begin()->expon
-              = remainder.polynomial.begin()->expon - divisor.polynomial.begin()->expon; //add
+              = remainder.polynomial.begin()->expon - divisor.polynomial.begin()->expon;
 
-          squareRoot += monomial; //add
-          divisor += monomial; //add
-          buffer = divisor * monomial; //add
-          remainder -= buffer; //add
+          squareRoot += monomial;
+          divisor += monomial;
+          buffer = divisor * monomial;
+          remainder -= buffer;
+
       }
 
       return squareRoot;
