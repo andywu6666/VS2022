@@ -231,6 +231,8 @@ public:
               newNode->prev = myData.myHead->prev;
               myData.myHead->prev->next = newNode;
               myData.myHead->prev = newNode;
+
+              myData.mySize++; //add
           }
 
 
@@ -252,14 +254,16 @@ public:
       if( right.myData.mySize > 0 ) // right is not empty
       {
          // size_type size = right.myData.mySize - myData.mySize;
-          for (int i = 0; i < right.size(); i++)
+          for (const_iterator it = right.begin(); it != right.end(); it++) //modify
           {
               nodePtr newNode = new node;
-              newNode->myVal = right.myData.myHead->myVal;
+              newNode->myVal = *it; // modify
               newNode->next = myData.myHead;
               newNode->prev = myData.myHead->prev;
               myData.myHead->prev->next = newNode;
               myData.myHead->prev = newNode;
+          
+              myData.mySize++; // add
           }
 
       }
