@@ -231,6 +231,8 @@ public:
               newNode->prev = myData.myHead->prev;
               myData.myHead->prev->next = newNode;
               myData.myHead->prev = newNode;
+
+              myData.mySize++; //add
           }
 
 
@@ -255,33 +257,33 @@ public:
          }
          else // the right list is not empty
          {
-             typename list<Ty>::iterator  leftIt = *this->begin();
-             typename list<Ty>::iterator rightIt = right->begin();
+            // typename list<Ty>::iterator  leftIt = *this->begin();
+            // typename list<Ty>::iterator rightIt = right->begin();
 
-             if (myData.mySize > right.myData.mySize)
-             {
-                 for (int i = 0; i < right.myData.mySize)
-                 {
+          //   if (myData.mySize > right.myData.mySize)
+         //    {
+            //     for (int i = 0; i < right.myData.mySize)
+          //       {
                      
-                 }
+          //       }
 
-                 for (int i = myData.mySize; i > right.myData.mySize; i--)
-                 {
+         //        for (int i = myData.mySize; i > right.myData.mySize; i--)
+         //        {
                      
-                 }
+          //       }
 
 
-             }
-             else if (myData.mySize < right.myData.mySize)
-             {
+        //     }
+         //    else if (myData.mySize < right.myData.mySize)
+         //    {
                  nodePtr newNode = new node;
-                 for (; leftIt != *this->end() ; leftIt = leftIt->next)
-                 newNode->myVal = right.myData.myHead->myVal;
+                 for (const_iterator it = right.begin(); it != right.end(); it++){ //modify
+                     newNode->myVal = *it;
                  newNode->next = myData.myHead;
                  newNode->prev = myData.myHead->prev;
                  myData.myHead->prev->next = newNode;
                  myData.myHead->prev = newNode;
-                
+                 myData.mySize++; // add
              }
 
          }
