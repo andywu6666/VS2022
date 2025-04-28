@@ -185,19 +185,37 @@ public:
       Polynomial remainder( *this );
 
 
-      for (int i = 1; i * i <= remainder.polynomial.begin()->coef; ++i) {
-          if (i * i == remainder.polynomial.begin()->coef) {
-              monomial.polynomial.begin()->coef = i;
+      /*monomial.attach(sqrt(remainder.polynomial.coef), remainder.polynomial.expon / 2);
+      squareRoot.attach(monomial.polynomial.coef, monomial.polynomial.expon);
+      divisor.attach(monomial.polynomial.coef, monomial.polynomial.expon);
+
+      buffer.attach( remainder.polynomial.coef * divisor.polynomial.coef, remainder.polynomial.expon + divisor.polynomial.expon);
+      remainder.polynomial -= buffer.polynomial;
+
+      for (int i = 0; i < polynomial.size();i ++) {
+          divisor.polynomial[divisor.polynomial.size() - 1].coef *= 2;
+          monomial.attach(remainder / divisor);
+          squareRoot.attach(monomial);
+          buffer.attach(remainder.polynomial.coef * divisor.polynomial.coef, remainder.polynomial.expon + divisor.polynomial.expon);
+          remainder.polynomial -= buffer.polynomial;
+
+
+      }*/
+      int leadingCoef = remainder.polynomial.begin()->coef; //add
+      int sqrtCoef = 0; //add
+      for (int i = 1; i <= leadingCoef; i++) { //add
+          if (i * i == leadingCoef) { //add
+              sqrtCoef = i; //add
+              break; //add
           }
       }
-      monomial.polynomial.begin()->expon = remainder.polynomial.begin()->expon / 2;
+      monomial.polynomial.begin()->coef = sqrtCoef; //add
+      monomial.polynomial.begin()->expon = remainder.polynomial.begin()->expon / 2; //add
 
-
-
-      squareRoot = monomial;
-      divisor = monomial;
-      buffer = squareRoot * divisor;
-      remainder -= buffer;
+      squareRoot = monomial; //add
+      divisor = monomial; //add
+      buffer = squareRoot * divisor; //add
+      remainder -= buffer; //add
 
       while( !remainder.zero() )
       {
