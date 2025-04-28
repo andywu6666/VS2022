@@ -231,6 +231,7 @@ public:
               newNode->prev = myData.myHead->prev;
               myData.myHead->prev->next = newNode;
               myData.myHead->prev = newNode;
+              myData.mySize++; //add
           }
 
 
@@ -276,9 +277,9 @@ public:
 
    void push_back( const Ty &val )
    {
-       myData.myHead = new node;
-       myData.myHead->myVal = Ty();
-       myData.myHead->prev = myData.myHead->next = myData.myHead;
+     /*  myData.myHead = new node; //delete
+       myData.myHead->myVal = Ty(); //delete
+       myData.myHead->prev = myData.myHead->next = myData.myHead;*/ //delete
 
        
        nodePtr newNode = new node;
@@ -287,7 +288,7 @@ public:
        newNode->prev = myData.myHead->prev;
        myData.myHead->prev->next = newNode;
        myData.myHead->prev = newNode;
-
+       myData.mySize++; //add
    }
 
    void clear() // erase all
