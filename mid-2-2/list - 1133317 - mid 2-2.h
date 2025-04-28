@@ -257,34 +257,45 @@ public:
          }
          else // the right list is not empty
          {
-            // typename list<Ty>::iterator  leftIt = *this->begin(); //delete
-            // typename list<Ty>::iterator rightIt = right->begin(); //delete
+             // typename list<Ty>::iterator  leftIt = *this->begin(); //delete
+             // typename list<Ty>::iterator rightIt = right->begin(); //delete
 
-          //   if (myData.mySize > right.myData.mySize) //delete
-         //    {
-            //     for (int i = 0; i < right.myData.mySize) //delete
-          //       {
+             if (myData.mySize > right.myData.mySize)
+             {
+                 for (int i = 0; i <  myData.mySize - right.myData.mySize ; i++) //modify
+                 {
+                     myData.myHead->prev = myData.myHead->prev->prev; //add
+                     delete myData.myHead->prev->next; //add
+                     myData.myHead->prev->next = myData.myHead; //add
+                 }
+
+                /* for (int i = myData.mySize; i > right.myData.mySize; i--) //delete
+                 {
                      
-          //       }
-
-         //        for (int i = myData.mySize; i > right.myData.mySize; i--) //delete
-         //        {
-                     
-          //       }
+                 }*/
 
 
-        //     }
-         //    else if (myData.mySize < right.myData.mySize) //delete
-         //    {
-                 nodePtr newNode = new node;
-                 for (const_iterator it = right.begin(); it != right.end(); it++){ //modify
-                     newNode->myVal = *it;
-                 newNode->next = myData.myHead;
-                 newNode->prev = myData.myHead->prev;
-                 myData.myHead->prev->next = newNode;
-                 myData.myHead->prev = newNode;
-                 myData.mySize++; // add
              }
+             else if (myData.mySize < right.myData.mySize)
+             {
+                // nodePtr newNode = new node; //move froom
+                 for (int i = 0; i < right.myData.mySize - myData.mySize; i++) { //modify
+                     nodePtr newNode = new node; // move to
+                     newNode->myVal = Ty(); //modify
+                     newNode->next = myData.myHead;
+                     newNode->prev = myData.myHead->prev;
+                     myData.myHead->prev->next = newNode;
+                     myData.myHead->prev = newNode;
+                 }
+             }
+             nodePtr It = myData.myHead->next; //add
+             nodePtr rightIt = right.myData.myHead->next; //add
+             for (; It != myData.myHead; It = It->next, rightIt = rightIt->next) //add
+             {
+                 It->myVal = rightIt->myVal; //add
+             }
+
+
 
          }
 
