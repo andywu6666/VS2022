@@ -97,22 +97,26 @@ public:
    list( const list &right )
       : myData()
    {
-      myData.myHead = new node;
-      myData.myHead->myVal = Ty();
-      myData.myHead->prev = myData.myHead->next = myData.myHead;
+       myData.myHead = new node;
+       myData.myHead->myVal = Ty();
+       myData.myHead->prev = myData.myHead->next = myData.myHead;
 
-      for (const_iterator it = right.begin(); it != right.end(); it = it->next)
-      {
-          nodePtr newNode = new node;
-          newNode->myVal = it->myVal;
+       if (right.myData.mySize > 0) // right is not empty
+       {
+           // size_type size = right.myData.mySize - myData.mySize;
+           for (const_iterator it = right.begin(); it != right.end(); it = it->next) 
+           {
+               nodePtr newNode = new node;
+               newNode->myVal = it->myVal; 
+               newNode->next = myData.myHead;
+               newNode->prev = myData.myHead->prev;
+               myData.myHead->prev->next = newNode;
+               myData.myHead->prev = newNode;
 
-          newNode->prev = myData.myHead->prev;
-          newNode->next = myData.myHead;
-          myData.myHead->prev->next = newNode;
-          myData.myHead->prev = newNode;
+               myData.mySize++; 
+           }
 
-          myData.mySize++;
-      }
+       }
 
    }
 
