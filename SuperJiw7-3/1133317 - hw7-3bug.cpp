@@ -472,13 +472,25 @@ public:
          myData.myLast = myData.myFirst + count;
          myData.myEnd = myData.myFirst + count;
       }
+      else{
+      myData.myFirst = myData.myLast = myData.myEnd = nullptr;
+      }
    }
 
    vector( const vector &right )
       : myData()
    {
-
-
+       size_type size = right.myData.myLast - right.myData.myFirst; //size = right.myData.myLast - right.myData.myFirst
+       if (size != 0) //size
+       {
+           myData.myFirst = new value_type[size];
+           for (int i = 0; i < size; i++) {
+               myData.myFirst[i] = right.myData.myFirst[i];
+           }
+           myData.myLast = myData.myFirst + size;
+           myData.myEnd = myData.myFirst + size;
+       }
+       myData.myFirst = myData.myLast = myData.myEnd = nullptr;
 
    }
 
@@ -490,67 +502,107 @@ public:
 
    iterator insert( const_iterator where, const Ty &val )
    {
-      if( where.ptr >= myData.myFirst && where.ptr <= myData.myLast )
-      {
-         size_type originalSize = size();
-         size_type originalCapacity = capacity();
-         if( originalSize == originalCapacity )
-         {
-            size_type newCapacity;
-            if( originalCapacity <= 1 )
+       if (where < myData.myFirst || where > myData.myLast)
+           return nullptr;
+
+       size_type pos = where - myData.myFirst;
+       size_type originalSize = size();
+       size_type originalCapacity = capacity();
+       if (originalSize == originalCapacity)
+       {
+           size_type newCapacity;
+           if (originalCapacity <= 1)
                newCapacity = originalCapacity + 1;
-            else
+           else
                newCapacity = originalCapacity * 3 / 2;
 
+           pointer newArray = new value_type[newCapacity]();
+
+           for (size_type i = 0; i < pos; i++)
+           {
+               newArray[i] = myData.myFirst[i];
+           }
+
+           newArray[pos] = val;
+
+           for (size_type j = pos; j < originalSize; j++)
+           {
+               newArray[j + 1] = myData.myFirst[j];
+           }
+
+           delete[] myData.myFirst;
+
+           myData.myFirst = newArray;
+           myData.myLast = newArray + originalSize + 1;
+           myData.myEnd = newArray + newCapacity;
+
+           return myData.myFirst + pos;
+       }
+       else
+       {
+           for (size_type i = originalSize; i > pos; i--)
+           {
+               myData.myFirst[i] = myData.myFirst[i - 1];
+           }
+
+           myData.myFirst[pos] = val;
+           myData.myLast++;
+
+           return myData.myFirst + pos;
 
 
-         }
-         else
-         {
-
-
-
-         }
-      }
-      else
-         return iterator( nullptr );
+       }
    }
 
    vector& operator=( const vector &right )
    {
-      if( this != &right ) // avoid self-assignment
-      {
-         size_type rightSize = right.size();
-         if( rightSize > capacity() )
-         {
+       if (this != &right) // avoid self-assignment
+       {
+           size_type rightSize = right.size();
+           if (rightSize > capacity())
+           {
+               if (capacity() > 0)
+                   delete[] myData.myFirst; // release space
 
+               size_type newCapacity = capacity() * 3 / 2;
+               if (newCapacity < rightSize)
+                   newCapacity = rightSize;
 
+               myData.myFirst = new value_type[newCapacity]();
+               myData.myEnd = myData.myFirst + newCapacity;
 
-            size_type newCapacity = capacity() * 3 / 2;
-            if( newCapacity < rightSize )
-               newCapacity = rightSize;
+           }
 
+           for (size_type i = 0; i < rightSize; i++)
+           {
+               myData.myFirst[i] = right.myData.myFirst[i];
+           }
+           myData.myLast = myData.myFirst + rightSize;
 
+       }
 
-         }
-
-
-
-      }
-
-      return *this; // enables x = y = z, for example
+       return *this; // enables x = y = z, for example
    }
 
    iterator erase( const_iterator where )
    {
-      if( where.ptr >= myData.myFirst && where.ptr < myData.myLast )
-      {
+       if (where < myData.myFirst || where >= myData.myLast)
+           return nullptr;
+
+       size_type pos = where - myData.myFirst;
+       size_type originalSize = size();
+       for (size_type i = pos; i < originalSize; i++)
+       {
+           myData.myFirst[i] = myData.myFirst[i + 1];
+       }
+       myData.myLast--;
 
 
 
-      }
-      else
-         return iterator( nullptr );
+
+
+       // return const_cast< iterator >( where );
+       return myData.myFirst + pos;
    }
 
    void clear()
@@ -661,9 +713,15 @@ private:
 template< typename Ty >
 bool operator==( const vector< Ty > &left, const vector< Ty > &right )
 {
-
-
-
+    if (left.size() != right.size())
+        return false;
+        
+    for (int i = 0; i < left.size(); i++)
+    {
+        if ( *(left.begin() + i) != *(right.begin() + i) )
+            return false;
+    }
+    return true;
 }
 
 template< typename Ty >
@@ -874,20 +932,43 @@ public:
    list( size_type count ) // construct list from count * Ty()
       : myData()
    {
-      myData.mySize = count;
-      myData.myHead = new node;
-      myData.myHead->myVal = Ty();
-      myData.myHead->prev = myData.myHead->next = myData.myHead;
 
+       myData.myHead = new node;
+       myData.myHead->myVal = Ty();
+       myData.myHead->prev = myData.myHead->next = myData.myHead;
 
+       for (int i = 0; i < count; i++) {
+           nodePtr newNode = new node;
+           newNode->myVal = Ty();
+
+           newNode->next = myData.myHead;
+           newNode->prev = myData.myHead->prev;
+           myData.myHead->prev->next = newNode;
+           myData.myHead->prev = newNode;
+
+           myData.mySize++;
+       }
 
    }
 
    list( const list &right )
       : myData()
    {
+       myData.myHead = new node;
+       myData.myHead->myVal = Ty();
+       myData.myHead->prev = myData.myHead->next = myData.myHead;
 
+       for (const_iterator it = right.begin(); it != right.end(); it = it->next)
+       {
+           nodePtr newNode = new node;
+           newNode->myVal = it->myVal;
 
+           newNode->prev = myData.myHead->prev;
+           newNode->next = myData.myHead;
+           myData.myHead->prev->next = newNode;
+           myData.myHead->prev = newNode;
+           myData.mySize++;
+       }
 
    }
 
@@ -899,14 +980,64 @@ public:
 
    list& operator=( const list &right )
    {
-      if( this != &right )
-      {
+       if (this != &right)
+       {
+           if (right.myData.mySize == 0) // the right list is empty
+           {
+               if (myData.mySize != 0) // the left list is not empty
+                   clear();
+           }
+           else // the right list is not empty
+           {
+               iterator leftIt = this->begin();
+               const_iterator rightIt = right.begin();
+
+               while (leftIt != this->end() && rightIt != right.end())
+               {
+                   leftIt->myVal = rightIt->myVal;
+                   leftIt = leftIt->next;
+                   rightIt = rightIt->next;
+               }
+
+               if (rightIt != right.end())
+               {
+                   while (rightIt != right.end())
+                   {
+                       nodePtr newNode = new node;
+                       newNode->myVal = rightIt->myVal;
+
+                       newNode->prev = myData.myHead->prev;
+                       newNode->next = myData.myHead;
+                       myData.myHead->prev->next = newNode;
+                       myData.myHead->prev = newNode;
+
+                       rightIt = rightIt->next;
+                   }
+               }
+
+               else if (leftIt != this->end())
+               {
+                   nodePtr lastNodeToKeep = leftIt->prev;
+
+                   while (leftIt != this->end())
+                   {
+                       nodePtr nodeToDelete = leftIt;
+                       leftIt = leftIt->next;
+                       delete nodeToDelete;
+                   }
+
+                   lastNodeToKeep->next = myData.myHead;
+                   myData.myHead->prev = lastNodeToKeep;
+               }
 
 
+               myData.mySize = right.myData.mySize;
 
-      }
 
-      return *this;
+           }
+       }
+
+       return *this;
    }
 
    iterator begin()
@@ -1001,24 +1132,48 @@ public:
 
    iterator insert( const_iterator where, const Ty &val ) // insert val at where
    {
+       nodePtr newNode = new node;
+       newNode->myVal = val;
 
+       nodePtr whereNode = const_cast<nodePtr>(where); //nodePtr
+       nodePtr prevNode = whereNode->prev;
 
+       newNode->next = whereNode;
+       newNode->prev = prevNode;
+       prevNode->next = newNode;
+       whereNode->prev = newNode;
 
+       myData.mySize++;
+
+       return iterator(newNode);
    }
 
    iterator erase( const_iterator where )
    {
+       nodePtr whereNode = const_cast<nodePtr>(where); //nodePtr
+       nodePtr prevNode = whereNode->prev;
+       nodePtr nextNode = whereNode->next;
 
+       prevNode->next = nextNode;
+       nextNode->prev = prevNode;
 
+       delete whereNode;
+       myData.mySize--;
 
+       return iterator(nextNode);
    }
 
    void clear()
    {
       if( myData.mySize != 0 ) // the list is not empty
       {
-
-
+          while (myData.myHead->next != myData.myHead)
+          {
+              myData.myHead->next = myData.myHead->next->next;
+              delete myData.myHead->next->prev;
+        }
+          myData.myHead->prev = myData.myHead;
+          myData.mySize = 0;
 
       }
    }
@@ -1030,8 +1185,20 @@ private:
 template< typename Ty >
 bool operator==( const list< Ty > &left, const list< Ty > &right )
 {
+    if (left.size() != right.size())
+        return false;
+
+    typename list<Ty>::const_iterator leftIt = left.begin();
+    typename list<Ty>::const_iterator rightIt = right.begin();
 
 
+    for (; leftIt != left.end(); leftIt = leftIt->next, rightIt = rightIt->next)
+    {
+        if (leftIt->myVal != rightIt->myVal)
+            return false;
+    }
+
+    return true;
 
 }
 
@@ -1087,7 +1254,31 @@ public:
    // function that tests if one HugeInteger is less than another
    bool operator<( HugeInteger &right )
    {
+       // First, compare sizes
+       if (integer.size() != right.integer.size())
+           return integer.size() < right.integer.size();
 
+       // Sizes are equal, compare digit by digit from most significant
+       // Use const reverse iterators
+       typename T::const_reverse_iterator rit1 = integer.crbegin(); // Iterator to the last element (most significant digit)
+       typename T::const_reverse_iterator rend1 = integer.crend();   // Iterator to position before the first element
+       typename T::const_reverse_iterator rit2 = right.integer.crbegin();
+       typename T::const_reverse_iterator rend2 = right.integer.crend();
+
+       // Loop while both iterators are valid (haven't reached the beginning)
+       while (rit1 != rend1 /* && rit2 != rend2 */) { // Check only rit1, as sizes are equal
+           if (*rit1 != *rit2) {
+               // If digits differ, the comparison result is determined
+               return *rit1 < *rit2;
+           }
+           // Digits are equal, move to the next less significant digit
+           ++rit1;
+           ++rit2;
+       }
+
+       // If the loop completes, all digits were equal, so the numbers are equal.
+       // Thus, *this is not less than right.
+       return false;
 
 
    }
@@ -1102,18 +1293,40 @@ public:
    // the minuend is greater than or equal to the subtrahend
    HugeInteger operator-( const HugeInteger &op2 )
    {
-      HugeInteger zero;
-      if( *this == op2 )
-         return zero;
+       HugeInteger zero;
+       if (*this == op2)
+           return zero;
 
-      HugeInteger difference( *this );
+       HugeInteger difference(*this);
+       typename T::iterator it1 = difference.integer.begin();
+       typename T::const_iterator it2 = op2.integer.begin();
+       int borrow = 0;
+       for (; it1 != difference.integer.end(); ++it1)
+       {
+           int digit1 = *it1;
+           int digit2 = (it2 != op2.integer.end()) ? *it2 : 0;
+           int diff = digit1 - digit2 - borrow;
+           if (diff < 0)
+           {
+               diff += 10;
+               borrow = 1;
+           }
+           else
+               borrow = 0;
+           *it1 = diff;
+           if (it2 != op2.integer.end())
+               ++it2;
+       }
+
+       while (difference.integer.size() > 1 && *(difference.integer.end() - 1) == 0)
+           difference.integer.erase(difference.integer.cend() - 1);
 
 
 
-      if( difference.leadingZero() )
-         cout << "difference has a leading zero!\n";
+       if (difference.leadingZero())
+           cout << "difference has a leading zero!\n";
 
-      return difference;
+       return difference;
    }
 
    // subtraction assignment operator; HugeInteger -= HugeInteger
@@ -1125,16 +1338,71 @@ public:
    // multiplication operator; HugeInteger * HugeInteger
    HugeInteger operator*( HugeInteger &op2 )
    {
-      HugeInteger zero;
-      if( isZero() || op2.isZero() )
-         return zero;
+       HugeInteger zero;
+       if (isZero() || op2.isZero())
+           return zero;
+
+       // Make copies to work with
+       HugeInteger A(*this);
+       HugeInteger B(op2);
+
+       // Get sizes
+       size_type n1 = A.integer.size();
+       size_type n2 = B.integer.size();
+
+       // Result vector size is n1 + n2
+       // Use size_t for constructor argument if that's what it expects
+       HugeInteger product(n1 + n2);
+
+       // Ensure product is initialized (vector constructor should handle this)
+       // Optional: Explicitly clear/fill with zeros if needed, though value-init should suffice
+       // for(typename T::iterator it = product.integer.begin(); it != product.integer.end(); ++it) {
+       //     *it = 0;
+       // }
+
+       // 1) Multiplication step (no carries yet)
+       for (size_type i = 0; i < n1; ++i) {
+           // Use const_iterator for read-only access to A and B
+           typename T::const_iterator itA = A.integer.cbegin() + i;
+           for (size_type j = 0; j < n2; ++j) {
+               typename T::const_iterator itB = B.integer.cbegin() + j;
+               // Get iterator to position i+j in product
+               typename T::iterator itP = product.integer.begin() + (i + j);
+               *itP += (*itA) * (*itB); // Accumulate product at position i+j
+           }
+       }
+
+       // 2) Carry handling step
+       value_type carry = 0; // Initialize carry
+       // Iterate through *all* potential digits of the product vector
+       for (size_type k = 0; k < (n1 + n2); ++k) {
+           typename T::iterator itP = product.integer.begin() + k; // Iterator to current digit k
+
+           *itP += carry; // Add carry from previous digit (k-1)
+
+           if (*itP >= 10) {
+               carry = *itP / 10; // Calculate new carry for next digit (k+1)
+               *itP %= 10;        // Keep the remainder in the current digit k
+           }
+           else {
+               carry = 0; // Reset carry if current digit < 10
+           }
+       }
+       // After this loop, 'carry' might hold a value if the last digit caused a carry,
+       // but the product vector size (n1+n2) is designed to accommodate this.
+
+       // 3) Remove leading zeros from the most significant end (back of vector)
+       while (product.integer.size() > 1 && product.integer.back() == 0) {
+           // Use cend() if erase takes a const_iterator, or end() otherwise
+           product.integer.erase(product.integer.cend() - 1);
+           // Or: product.integer.erase(product.integer.end() - 1);
+       }
 
 
+       if (product.leadingZero()) // This check might be redundant now
+           cout << "product has a leading zero!\n";
 
-      if( product.leadingZero() )
-         cout << "product has a leading zero!\n";
-
-      return product;
+       return product;
    }
 
    // multiplication assignment operator; HugeInteger *= HugeInteger
@@ -1147,13 +1415,46 @@ public:
    // provided that the op2 is not equal to 0
    HugeInteger operator/( HugeInteger &op2 )
    {
-      HugeInteger zero;
-      if( *this < op2 )
-         return zero;
+       HugeInteger zero;
+       if (*this < op2)
+           return zero;
 
+       HugeInteger dividend(*this);
+       HugeInteger divisor(op2);
+       HugeInteger remainder = dividend;
 
+       size_type dividendSize = dividend.integer.size();
+       size_type divisorSize = divisor.integer.size();
 
-      return quotient;
+       int shift = static_cast<int>(dividendSize) - static_cast<int>(divisorSize);
+
+       HugeInteger buffer(divisor);
+       for (int i = 0; i < shift; ++i)
+           buffer.integer.insert(buffer.integer.cbegin(), 0);
+
+       int quotientSize;
+       if (dividend < buffer) {
+           buffer.integer.erase(buffer.integer.cbegin());
+           quotientSize = shift;
+       }
+       else {
+           quotientSize = shift + 1;
+       }
+
+       HugeInteger quotient(static_cast<unsigned int>(quotientSize));
+       typename T::iterator quotPtr = quotient.integer.begin();
+
+       for (int k = quotientSize - 1; k >= 0; --k) {
+           while (!(remainder < buffer)) {
+               remainder = remainder - buffer;
+               quotPtr[k]++;
+               if (remainder.isZero())
+                   return quotient;
+           }
+
+           buffer.integer.erase(buffer.integer.cbegin());
+       }
+       return quotient;
    }
 
    // modulus operator; HugeInteger % HugeInteger
