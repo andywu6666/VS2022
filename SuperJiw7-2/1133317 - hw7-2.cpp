@@ -497,51 +497,40 @@ public:
       if( isZero() || op2.isZero() )
          return zero;
 
-      // 複製兩個操作數
       HugeInteger A(*this), B(op2);
-      // 位數
       size_type n1 = A.integer.size();
       size_type n2 = B.integer.size();
-      // 結果長度 = n1 + n2
       HugeInteger product(static_cast<unsigned int>(n1 + n2));
 
-      // 2) 雙重迴圈：把 A 的第 i 位 * B 的第 j 位 的乘積，累加到 product[i+j]
       for (size_type i = 0; i < n1; ++i) {
-          // 先找到 A 的第 i 個節點
           typename T::iterator itA = A.integer.begin();
           for (size_type t = 0; t < i; ++t) itA = itA->next;
           int a = itA->myVal;
 
           for (size_type j = 0; j < n2; ++j) {
-              // 找 B 的第 j 個節點
               typename T::iterator itB = B.integer.begin();
               for (size_type t = 0; t < j; ++t) itB = itB->next;
               int b = itB->myVal;
 
-              // 找 product 上對應的節點 (i+j)
               typename T::iterator itP = product.integer.begin();
               for (size_type t = 0; t < i + j; ++t) itP = itP->next;
 
-              // 累加乘積
               itP->myVal += a * b;
           }
       }
 
-      // 3) 統一處理進位：掃一次 product，每位 ≥10 就 carry 到下一位
       {
           typename T::iterator it = product.integer.begin();
-          // 最後一位一定存在 (因為長度至少 1)，而且你確定 n1+n2 節點都在
           while (it != product.integer.end()) {
               if (it->myVal >= 10) {
                   int carry = it->myVal / 10;
                   it->myVal %= 10;
-                  it->next->myVal += carry;  // 下一節點一定存在
+                  it->next->myVal += carry;
               }
               it = it->next;
           }
       }
 
-      // 刪除末端多餘的零
       while (product.integer.size() > 1 && product.integer.end()->prev->myVal == 0 ) {
           product.integer.erase(product.integer.end()->prev);
       }
