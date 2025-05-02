@@ -490,20 +490,15 @@ public:
        if (isZero() || op2.isZero())
            return zero;
 
-       // 複製兩個操作數
        HugeInteger A(*this), B(op2);
 
-       // 位數
        size_type n1 = A.integer.size();
        size_type n2 = B.integer.size();
 
-       // 結果長度 = n1 + n2
        HugeInteger product(static_cast<unsigned int>(n1 + n2));
 
-       // 2) 雙重迴圈：A 的第 i 位 * B 的第 j 位，累加到 product[i+j]
        for (size_type i = 0; i < n1; ++i) {
            for (size_type j = 0; j < n2; ++j) {
-               // 用 iterator 訪問
                typename T::iterator itA = A.integer.begin() + i;
                typename T::iterator itB = B.integer.begin() + j;
                typename T::iterator itP = product.integer.begin() + (i + j);
@@ -511,7 +506,6 @@ public:
            }
        }
 
-       // 3) 統一處理進位
        for (size_type k = 0; k < n1 + n2 - 1; ++k) {
            typename T::iterator itP = product.integer.begin() + k;
            if (*itP >= 10) {
@@ -520,7 +514,6 @@ public:
            }
        }
 
-       // 4) 刪除末端多餘的零
        while (product.integer.size() > 1 && *(product.integer.end() - 1) == 0)
            product.integer.erase(product.integer.end() - 1);
 
