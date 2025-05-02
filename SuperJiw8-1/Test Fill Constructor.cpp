@@ -27,16 +27,8 @@ template< typename T >
 void testFillConstructor()
 {
    size_t numErrors = 0;
-
-   T value = static_cast< T >( rand() );
-   std::deque< T > deque1( 0, value );
-   deque< T > deque2( 0, value );
-   if( !equal( deque1, deque2 ) )
-      numErrors++;
-
-   for( int i = 0; i < 20; i++ )
+   for( size_t count = 0; count < 500; count++ )
    {
-      size_t count = rand();
       T value = static_cast< T >( rand() );
       std::deque< T > deque1( count, value );
       deque< T > deque2( count, value );
@@ -95,7 +87,11 @@ bool equal( std::deque< T > &deque1, deque< T > &deque2 )
 
       if( map1[ row ] == nullptr && map2[ row ] != nullptr )
          return false;
+   }
 
+   for( size_t i = myOff1; i < myOff1 + mySize1; ++i )
+   {
+      row = ( i / dequeSize ) % mapSize1;
       if( map1[ row ] != nullptr && map2[ row ] != nullptr )
       {
          col = i % dequeSize;
