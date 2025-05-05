@@ -369,8 +369,7 @@ public:
            size_type sum = 0;
            for (size_type i = 0; i < newMapSize - 1; ++i) {
                if (sum < count) {
-                   myData.map[i] = new Ty[blockSize];  // 不會初始化成0
-                   //myData.map[i] = new Ty[blockSize]();    //會初始化成0
+                   myData.map[i] = new Ty[blockSize];
                    for (size_type j = 0; j < blockSize; ++j) {
                        if (sum < count) {
                            myData.map[i][j] = val;
