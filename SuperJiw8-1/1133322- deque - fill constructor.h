@@ -366,14 +366,14 @@ public:
 
            myData.map = new Ty * [newMapSize]();
 
-           size_type sum = 0;
+           size_type filledCount = 0;
            for (size_type i = 0; i < newMapSize - 1; ++i) {
-               if (sum < count) {
+               if (filledCount < count) {
                    myData.map[i] = new Ty[blockSize];
-                   for (size_type j = 0; j < blockSize; ++j) {
-                       if (sum < count) {
+                   for (size_type j = 0; j < blockSize; ++j) { 
+                       if (filledCount < count) {
                            myData.map[i][j] = val;
-                           ++sum;
+                           ++filledCount;
                        }
                        else {
                            break;
