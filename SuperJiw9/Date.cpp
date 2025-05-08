@@ -85,7 +85,29 @@ bool Date::operator>=( const Date &date2 )
 // return *this - date2 provided that *this > date2
 int Date::operator-( const Date &date2 )
 {
+    //😔😿😫😞😣☹️🙁(●'◡'●)
+    int days[13] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
+    // Helper to count days since 1/1/2000 for a given date
+    int daysFrom2000 = 0;
+    int daysFrom2000_date2 = 0;
+    int i, j;
+
+    // Count days for *this
+    for (i = 2000; i < year; i++)
+        daysFrom2000 += leapYear(i) ? 366 : 365;
+    for (j = 1; j < month; j++)
+        daysFrom2000 += (j == 2 && leapYear(year)) ? 29 : days[j];
+    daysFrom2000 += day - 1;
+
+    // Count days for date2
+    for (i = 2000; i < date2.year; i++)
+        daysFrom2000_date2 += leapYear(i) ? 366 : 365;
+    for (j = 1; j < date2.month; j++)
+        daysFrom2000_date2 += (j == 2 && leapYear(date2.year)) ? 29 : days[j];
+    daysFrom2000_date2 += date2.day - 1;
+
+    return daysFrom2000 - daysFrom2000_date2;
 
 
 }
