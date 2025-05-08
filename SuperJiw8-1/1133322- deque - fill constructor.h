@@ -362,7 +362,7 @@ public:
            }
 
            //using MapPtr = typename ScaryVal::MapPtr;
-           using MapPtr = Ty**;
+           //using MapPtr = Ty**;
 
            myData.map = new Ty * [newMapSize]();
 

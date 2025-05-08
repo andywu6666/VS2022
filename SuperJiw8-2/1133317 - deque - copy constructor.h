@@ -351,7 +351,8 @@ public:
          myData.mapSize = 8;
          while( myData.mySize > dequeSize * ( myData.mapSize - 1 ) )
             myData.mapSize *= 2;
-
+          
+         
 
 
       }
