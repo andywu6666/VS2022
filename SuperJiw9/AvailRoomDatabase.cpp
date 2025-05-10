@@ -234,10 +234,7 @@ int AvailRoomDatabase::compMinNumRooms( int roomType,
 void AvailRoomDatabase::decreaseAvailRooms( int roomType, int numRooms,
                         const Date &checkInDate, const Date &checkOutDate )
 {
-    if (roomType < 1 || roomType > 5 || numRooms <= 0)
-    {
-        return; // Invalid input
-    }
+   
 
     vector< AvailRoom >::iterator checkInIter;
     vector< AvailRoom >::iterator checkOutIter;
@@ -246,6 +243,7 @@ void AvailRoomDatabase::decreaseAvailRooms( int roomType, int numRooms,
 
     if (checkInIter == availRooms.end() || checkOutIter == availRooms.end() || checkInIter == checkOutIter)
     {
+        cout << "Dates not found or invalid range" << endl;
         return; // Dates not found or invalid range
     }
 
