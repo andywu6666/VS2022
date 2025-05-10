@@ -202,10 +202,7 @@ void AvailRoomDatabase::displayAvailableRooms( Date checkInDate, Date checkOutDa
 int AvailRoomDatabase::compMinNumRooms( int roomType,
                        const Date &checkInDate, const Date &checkOutDate )
 {
-    if (roomType < 1 || roomType > 5) // Assuming room types are 1-5
-    {
-        return 0; // Invalid room type
-    }
+   
 
     vector< AvailRoom >::iterator checkInIter;
     vector< AvailRoom >::iterator checkOutIter;
