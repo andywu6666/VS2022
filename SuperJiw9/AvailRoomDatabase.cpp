@@ -5,7 +5,8 @@
 #include <fstream>
 using namespace std;
 #include "AvailRoomDatabase.h" // AvailRoomDatabase class definition
-
+#include "AvailRoom.h"         // Added for AvailRoom usage
+#include "Date.h"              // Added for Date usage
 
 extern bool leapYear( int year );
 extern Date computeCurrentDate();
@@ -31,6 +32,7 @@ AvailRoomDatabase::~AvailRoomDatabase()
 
 void AvailRoomDatabase::loadAvailableRooms()
 {
+    availRooms.clear();
     ifstream inFile("Available Rooms 2025-5-5.dat", ios::in | ios::binary);
 
     if (!inFile)
@@ -202,7 +204,10 @@ void AvailRoomDatabase::displayAvailableRooms( Date checkInDate, Date checkOutDa
 int AvailRoomDatabase::compMinNumRooms( int roomType,
                        const Date &checkInDate, const Date &checkOutDate )
 {
-   
+    if (roomType < 1 || roomType > 5) // Assuming room types are 1-5
+    {
+        return 0; // Invalid room type
+    }
 
     vector< AvailRoom >::iterator checkInIter;
     vector< AvailRoom >::iterator checkOutIter;
@@ -231,7 +236,10 @@ int AvailRoomDatabase::compMinNumRooms( int roomType,
 void AvailRoomDatabase::decreaseAvailRooms( int roomType, int numRooms,
                         const Date &checkInDate, const Date &checkOutDate )
 {
-   
+    if (roomType < 1 || roomType > 5 || numRooms <= 0)
+    {
+        return; // Invalid input
+    }
 
     vector< AvailRoom >::iterator checkInIter;
     vector< AvailRoom >::iterator checkOutIter;
@@ -254,7 +262,7 @@ void AvailRoomDatabase::decreaseAvailRooms( int roomType, int numRooms,
 
 void AvailRoomDatabase::saveAvailableRooms()
 {
-    ofstream outFile("Available Rooms blank.dat", ios::out | ios::binary);
+    ofstream outFile("Available Rooms 2025-5-5.dat", ios::out | ios::binary);
 
     if (!outFile)
     {
