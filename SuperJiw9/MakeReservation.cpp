@@ -166,7 +166,7 @@ void MakeReservation::computeAvailableMonths( Date currentDate, Date availableMo
     availableMonths[0].setMonth(currentDate.getMonth());
     availableMonths[0].setDay(1);
 
-    for (int i = 1; i < 7; ++i)
+    for (int i = 1; i < 6; ++i)
     {
         int month = availableMonths[i - 1].getMonth() + 1;
         int year = availableMonths[i - 1].getYear();
@@ -189,17 +189,17 @@ void MakeReservation::inputCheckInDates( Date &checkInDate, Date currentDate,
 {
     cout << "\nPlease Input Check In Date\n"; // Adjusted prompt
     cout << "\nMonth:\n"; // Adjusted prompt
-    for (int i = 0; i < 7; ++i)
+    for (int i = 0; i < 6; ++i)
     {
         cout << i + 1 << ". " << availableMonths[i].getYear() << "-"
             << setw(2) << setfill('0') << availableMonths[i].getMonth() << endl;
     }
 
     cout << "? "; // Adjusted prompt
-    int monthChoice = inputAnInteger(1, 7);
+    int monthChoice = inputAnInteger(1, 6);
     while (monthChoice == -1) {
-        cout << "Invalid choice. Please enter a number between 1 and 7: ";
-        monthChoice = inputAnInteger(1, 7);
+        cout << "Invalid choice. Please enter a number between 1 and 6: ";
+        monthChoice = inputAnInteger(1, 6);
     }
     checkInYMCode = monthChoice - 1;
 
@@ -242,17 +242,17 @@ void MakeReservation::inputCheckOutDates( Date &checkOutDate, Date checkInDate,
     cout << "\nPlease Input Check Out Date\n"; // Adjusted prompt
     cout << "\nMonth:\n"; // Adjusted prompt
     int displayOptionNumber = 1;
-    for (int i = checkInYMCode; i < 7; ++i)
+    for (int i = checkInYMCode; i < 6; ++i)
     {
         cout << displayOptionNumber++ << ". " << availableMonths[i].getYear() << "-"
             << setw(2) << setfill('0') << availableMonths[i].getMonth() << endl;
     }
 
     cout << "? "; // Adjusted prompt
-    int monthChoiceRelative = inputAnInteger(1, 7 - checkInYMCode);
+    int monthChoiceRelative = inputAnInteger(1, 6 - checkInYMCode);
     while (monthChoiceRelative == -1) {
-        cout << "Invalid choice. Please enter a number between 1 and " << 7 - checkInYMCode << ": ";
-        monthChoiceRelative = inputAnInteger(1, 7 - checkInYMCode);
+        cout << "Invalid choice. Please enter a number between 1 and " << 6 - checkInYMCode << ": ";
+        monthChoiceRelative = inputAnInteger(1, 6 - checkInYMCode);
     }
     int checkoutYMCode = checkInYMCode + monthChoiceRelative - 1;
 
