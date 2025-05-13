@@ -239,56 +239,62 @@ void MakeReservation::inputCheckInDates( Date &checkInDate, Date currentDate,
 void MakeReservation::inputCheckOutDates( Date &checkOutDate, Date checkInDate,
      Date availableMonths[], int checkInYMCode, int firstDay, int lastDay )
 {
-    cout << "\nPlease Input Check Out Date\n"; // Adjusted prompt
-    cout << "\nMonth:\n"; // Adjusted prompt
-    int displayOptionNumber = 1;
-    for (int i = checkInYMCode; i < 6; ++i)
-    {
-        cout << displayOptionNumber++ << ". " << availableMonths[i].getYear() << "-"
-            << setw(2) << setfill('0') << availableMonths[i].getMonth() << endl;
-    }
+    int chosenYear = 0, chosenMonth = 0;
+    int firstDayForCheckout = 0, lastDayForCheckout = 0;
+    bool validMonthSelected = false; // Renamed from validMonthSelectedLoop for clarity
 
-    cout << "? "; // Adjusted prompt
-    int monthChoiceRelative = inputAnInteger(1, 6 - checkInYMCode);
-    while (monthChoiceRelative == -1) {
-        cout << "Invalid choice. Please enter a number between 1 and " << 6 - checkInYMCode << ": ";
-        monthChoiceRelative = inputAnInteger(1, 6 - checkInYMCode);
-    }
-    int checkoutYMCode = checkInYMCode + monthChoiceRelative - 1;
+    while (!validMonthSelected) {
+        cout << "\nPlease Input Check Out Date\n"; // Adjusted prompt
+        cout << "\nMonth:\n"; // Adjusted prompt
+        int displayOptionNumber = 1;
+        for (int i = checkInYMCode; i < 6; ++i)
+        {
+            cout << displayOptionNumber++ << ". " << availableMonths[i].getYear() << "-"
+                << setw(2) << setfill('0') << availableMonths[i].getMonth() << endl;
+        }
 
-    int chosenYear = availableMonths[checkoutYMCode].getYear();
-    int chosenMonth = availableMonths[checkoutYMCode].getMonth();
+        cout << "? "; // Adjusted prompt
+        int monthChoiceRelative = inputAnInteger(1, 6 - checkInYMCode);
+        while (monthChoiceRelative == -1) {
+            cout << "Invalid choice. Please enter a number between 1 and " << 6 - checkInYMCode << ": ";
+            monthChoiceRelative = inputAnInteger(1, 6 - checkInYMCode);
+        }
+        int checkoutYMCode = checkInYMCode + monthChoiceRelative - 1;
 
-    int firstDayForCheckout;
-    if (chosenYear == checkInDate.getYear() && chosenMonth == checkInDate.getMonth())
-    {
-        firstDayForCheckout = checkInDate.getDay() + 1;
-    }
-    else
-    {
-        firstDayForCheckout = 1;
-    }
+        chosenYear = availableMonths[checkoutYMCode].getYear();
+        chosenMonth = availableMonths[checkoutYMCode].getMonth();
 
-    int daysInMonth[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-    if (leapYear(chosenYear))
-    {
-        daysInMonth[2] = 29;
-    }
-    int lastDayForCheckout = daysInMonth[chosenMonth];
+        int daysInMonth[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+        if (leapYear(chosenYear))
+        {
+            daysInMonth[2] = 29;
+        }
+        lastDayForCheckout = daysInMonth[chosenMonth];
 
-    if (firstDayForCheckout > lastDayForCheckout && chosenYear == checkInDate.getYear() && chosenMonth == checkInDate.getMonth()) {
-        // This case means check-in was the last day of the month, and user picked the same month for checkout.
-        // The loop for month selection should prevent picking an invalid month range,
-        // but day selection needs to be robust.
-        // If firstDayForCheckout > lastDayForCheckout, it means no valid day exists in this month.
-        // This should ideally be caught by making sure the month selection itself is valid.
-        // For now, the day input loop will catch if they enter an invalid day.
-        // A more user-friendly approach would be to re-prompt for month if this specific condition is met.
-        cout << "Cannot check out in the same month if check-in is on the last day. Please select a later month for check-out." << endl;
-        // To force re-selection, one might need to restructure the input flow or use a loop here.
-        // For this iteration, we'll assume the day input validation below handles it.
-    }
 
+        if (chosenYear == checkInDate.getYear() && chosenMonth == checkInDate.getMonth())
+        {
+            if (checkInDate.getDay() == lastDayForCheckout) {
+                cout << "Check-in is on the last day of this month (" << checkInDate.getYear() << "-" << checkInDate.getMonth() << "-" << checkInDate.getDay()
+                    << "). Please select a later month for check-out." << endl;
+                // validMonthSelected remains false, loop will continue
+                continue; // Restart month selection
+            }
+            firstDayForCheckout = checkInDate.getDay() + 1;
+        }
+        else
+        {
+            firstDayForCheckout = 1;
+        }
+
+        if (firstDayForCheckout > lastDayForCheckout) {
+
+            cout << "No valid checkout days in the selected month (" << chosenYear << "-" << chosenMonth
+                << ") after your check-in date. Please select a later month." << endl;
+            continue;
+        }
+        validMonthSelected = true;
+    }
 
     cout << "\nDay (" << firstDayForCheckout << " ~ " << lastDayForCheckout << "): "; // Adjusted prompt
     int chosenDay;
