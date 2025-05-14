@@ -98,7 +98,7 @@ void MakeReservation::execute()
    cout << 6 << ". Give up\n";
    cout << "? ";
 
-   int choice = inputAnInteger(1, 6);
+   int choice = 0;
    int roomType = 0;
    int maxRoomsForChosenType = 0;
 
@@ -138,8 +138,6 @@ void MakeReservation::execute()
        }
    }
 
-  // roomType = availType[choice - 1] ;
- //   maxRoomsForChosenType = numAvailType[choice - 1];
     int numRooms = 0;
 
    cout << "\nNumber of rooms ( " << maxRoomsForChosenType << " rooms available ): ";
@@ -215,6 +213,7 @@ void MakeReservation::computeAvailableMonths( Date currentDate, Date availableMo
 void MakeReservation::inputCheckInDates( Date &checkInDate, Date currentDate,
      Date availableMonths[], int &checkInYMCode, int &firstDay, int &lastDay )
 {
+    showCheckInOption:
     cout << "\nPlease Input Check In Date\n"; // Adjusted prompt
     cout << "\nMonth:\n"; // Adjusted prompt
     for (int i = 0; i < 6; ++i)
@@ -226,8 +225,7 @@ void MakeReservation::inputCheckInDates( Date &checkInDate, Date currentDate,
     cout << "? "; // Adjusted prompt
     int monthChoice = inputAnInteger(1, 6);
     while (monthChoice == -1) {
-        cout << "Invalid choice. Please enter a number between 1 and 6: ";
-        monthChoice = inputAnInteger(1, 6);
+        goto showCheckInOption;
     }
     checkInYMCode = monthChoice - 1;
 
@@ -248,13 +246,17 @@ void MakeReservation::inputCheckInDates( Date &checkInDate, Date currentDate,
     {
         daysInMonth[2] = 29;
     }
-    lastDay = daysInMonth[chosenMonth];
+        lastDay = daysInMonth[chosenMonth];
+    
+        if (checkInYMCode == 5)
+            if (lastDay == 31)
+                lastDay--;
 
+    inputDays:
     cout << "\nDay (" << firstDay << " ~ " << lastDay << "): "; // Adjusted prompt
     int chosenDay = inputAnInteger(firstDay, lastDay);
     while (chosenDay == -1) {
-        cout << "Invalid day. Please enter a day between " << firstDay << " and " << lastDay << ": ";
-        chosenDay = inputAnInteger(firstDay, lastDay);
+        goto inputDays;
     }
 
     checkInDate.setYear(chosenYear);
