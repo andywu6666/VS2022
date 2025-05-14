@@ -33,7 +33,7 @@ AvailRoomDatabase::~AvailRoomDatabase()
 void AvailRoomDatabase::loadAvailableRooms()
 {
     availRooms.clear();
-    ifstream inFile("Available Rooms 2025-5-5.dat", ios::in | ios::binary);
+    ifstream inFile(availFileName, ios::in | ios::binary);
 
     if (!inFile)
     {
@@ -262,7 +262,7 @@ void AvailRoomDatabase::decreaseAvailRooms( int roomType, int numRooms,
 
 void AvailRoomDatabase::saveAvailableRooms()
 {
-    ofstream outFile("Available Rooms 2025-5-5.dat", ios::out | ios::binary);
+    ofstream outFile(availFileName, ios::out | ios::binary);
 
     if (!outFile)
     {

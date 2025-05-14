@@ -277,17 +277,17 @@ void MakeReservation::inputCheckOutDates( Date &checkOutDate, Date checkInDate,
         int displayOptionNumber = 1;
         for (int i = checkInYMCode; i < 6; ++i)
         {
-            cout << displayOptionNumber++ << ". " << availableMonths[i].getYear() << "-"
+            cout << i+1 << ". " << availableMonths[i].getYear() << "-"
                 << setw(2) << setfill('0') << availableMonths[i].getMonth() << endl;
         }
 
         cout << "? "; 
-        int monthChoiceRelative = inputAnInteger(1, 6 - checkInYMCode);
+        int monthChoiceRelative = inputAnInteger(checkInYMCode + 1, 6 );
         while (monthChoiceRelative == -1) {
-            cout << "Invalid choice. Please enter a number between 1 and " << 6 - checkInYMCode << ": ";
-            monthChoiceRelative = inputAnInteger(1, 6 - checkInYMCode);
+            cout << "Invalid choice. Please enter a number between " << checkInYMCode + 1 << "and " << 6 << ": ";
+            monthChoiceRelative = inputAnInteger(checkInYMCode + 1, 6);
         }
-        int checkoutYMCode = checkInYMCode + monthChoiceRelative - 1;
+        int checkoutYMCode = monthChoiceRelative  - 1;
 
         chosenYear = availableMonths[checkoutYMCode].getYear();
         chosenMonth = availableMonths[checkoutYMCode].getMonth();
