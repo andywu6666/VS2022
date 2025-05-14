@@ -27,7 +27,7 @@ void MakeReservation::execute()
        << setw(2) << setfill('0') << currentDate.getMonth() << "-"
        << setw(2) << setfill('0') << currentDate.getDay() << endl;*/
 
-   Date availableMonths[ 7 ];
+   Date availableMonths[ 7 ]; //6 is enough , adding 1 for assurance
 
    computeAvailableMonths( currentDate, availableMonths );
 
@@ -75,17 +75,17 @@ void MakeReservation::execute()
    vector<int> availType;
    vector<int> numAvailType;
 
+   showAvailType:
    cout << "\nSelect Room Type:\n";
-   int selectionOption = 1;
    for (int i = 1; i <= 5; i++)
    {
        int roomsForThisType = availableRoomDatabase.compMinNumRooms(i, checkInDate, checkOutDate);
        if (roomsForThisType > 0)
        {
-           cout << selectionOption << ". " << roomTypeName[i] << "\n";
+           cout << i << ". " << roomTypeName[i] << "\n";
            availType.push_back(i);
            numAvailType.push_back(roomsForThisType);
-           selectionOption++;
+
        }
    }
 
@@ -95,24 +95,52 @@ void MakeReservation::execute()
        return;
    }
 
-   cout << selectionOption << ". Give up\n";
+   cout << 6 << ". Give up\n";
    cout << "? ";
 
-   int choice = inputAnInteger(1, selectionOption);
-   while (choice == -1)
+   int choice = inputAnInteger(1, 6);
+   int roomType = 0;
+   int maxRoomsForChosenType = 0;
+
+
+   while (true)
    {
-       cout << "Invalid choice. Please enter a number between 1 and " << selectionOption << ": ";
-       choice = inputAnInteger(1, selectionOption);
-   }
-   if (choice == selectionOption)
-   {
-       cout << "\nReservation process canceled." << endl;
-       return;
+       
+        choice = inputAnInteger(1, 6);
+       if (choice == -1) {
+           cout << "Invalid input. Please enter a number: ";
+           goto showAvailType;
+       }
+
+       if (choice == 6)
+       {
+           cout << "\nReservation process canceled." << endl;
+           return;
+       }
+
+       // User choice is 1-5, representing an attempt to select an actual room type
+       roomType = choice;
+       bool isValidChoice = false;
+       for (size_t k = 0; k < availType.size(); ++k) {
+           if (availType[k] == roomType) {
+               maxRoomsForChosenType = numAvailType[k];
+               isValidChoice = true;
+               break;
+           }
+       }
+
+       if (isValidChoice) {
+           break; // Valid room type selected
+       }
+       else {
+           goto showAvailType;
+           
+       }
    }
 
-   int roomType = availType[choice - 1];
-   int maxRoomsForChosenType = numAvailType[choice - 1];
-   int numRooms;
+  // roomType = availType[choice - 1] ;
+ //   maxRoomsForChosenType = numAvailType[choice - 1];
+    int numRooms = 0;
 
    cout << "\nNumber of rooms ( " << maxRoomsForChosenType << " rooms available ): ";
    numRooms = inputAnInteger(1, maxRoomsForChosenType);
