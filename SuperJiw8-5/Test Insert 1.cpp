@@ -3,7 +3,7 @@ using std::cout;
 using std::endl;
 
 #include <deque>
-#include "deque.h"
+#include "1133317 - deque - insert.h"
 
 template< typename T >
 size_t compDequeSize();

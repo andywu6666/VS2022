@@ -348,11 +348,40 @@ public:
          size_type dequeSize = compDequeSize();
 
          myData.mySize = right.myData.mySize;
+
+
          myData.mapSize = 8;
          while( myData.mySize > dequeSize * ( myData.mapSize - 1 ) )
             myData.mapSize *= 2;
           
-         
+         //using MapPtr = typename ScaryVal::MapPtr;
+         // using MapPtr = Ty**;
+
+         myData.map = new MapPtr[myData.mapSize]; 
+         myData.myOff = (myData.mapSize / 2) * dequeSize - (myData.mySize / 2);
+
+         size_type start = myData.myOff;
+         size_type end = start + myData.mySize;
+
+         for (size_type i = start; i < end; ++i)
+         {
+             size_type block = getBlock(i);
+             if (myData.map[block] == nullptr)
+                 myData.map[block] = new value_type[dequeSize];
+         }
+
+         for (size_type i = 0; i < myData.mySize; ++i)
+         {
+             size_type destIndex = myData.myOff + i;
+             size_type destBlock = getBlock(destIndex);
+             size_type destOffset = destIndex % dequeSize;
+
+             size_type srcIndex = right.myData.myOff + i;
+             size_type srcBlock = right.getBlock(srcIndex);
+             size_type srcOffset = srcIndex % dequeSize;
+
+             myData.map[destBlock][destOffset] = right.myData.map[srcBlock][srcOffset];
+         }
 
 
       }

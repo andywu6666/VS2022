@@ -6,7 +6,7 @@ using std::endl;
 using std::time;
 
 #include <deque>
-#include "deque.h"
+#include "1133317 - deque - assignment.h"
 
 template< typename T >
 size_t compDequeSize();
