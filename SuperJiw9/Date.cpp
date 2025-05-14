@@ -85,7 +85,7 @@ bool Date::operator>=( const Date &date2 )
 // return *this - date2 provided that *this > date2
 int Date::operator-( const Date &date2 )
 {
-    //😔😿😫😞😣☹️🙁(●'◡'●)
+
     int days[13] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
     // Helper to count days since 1/1/2000 for a given date

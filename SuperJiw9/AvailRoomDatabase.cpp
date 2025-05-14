@@ -57,11 +57,11 @@ void AvailRoomDatabase::initAvailRooms()
     Date tempDate = currentDate;
     AvailRoom currentAvailRoom;
 
-    // Create available rooms information for 180 days (approximately 6 months)
-    for (int i = 0; i < 180; ++i)
+
+    for (int i = 0; i < 180; ++i) 
     {
         currentAvailRoom.setDate(tempDate.getYear(), tempDate.getMonth(), tempDate.getDay());
-        currentAvailRoom.initAvailRooms(); // Initializes availRooms[i] to totalNumRooms[i]
+        currentAvailRoom.initAvailRooms(); 
         availRooms.push_back(currentAvailRoom);
 
         // Increment date
@@ -95,7 +95,7 @@ void AvailRoomDatabase::initAvailRooms()
 
 void AvailRoomDatabase::appendAvailRooms()
 {
-    if (availRooms.empty()) // Should not happen if initAvailRooms was called correctly
+    if (availRooms.empty()) 
     {
         initAvailRooms();
         return;
@@ -105,7 +105,7 @@ void AvailRoomDatabase::appendAvailRooms()
     Date currentDate = computeCurrentDate();
     Date sixMonthsLater = currentDate;
 
-    // Calculate date six months from current date
+
     int month = sixMonthsLater.getMonth() + 6;
     int year = sixMonthsLater.getYear();
     while (month > 12) {
@@ -114,7 +114,7 @@ void AvailRoomDatabase::appendAvailRooms()
     }
     sixMonthsLater.setMonth(month);
     sixMonthsLater.setYear(year);
-    // Adjust day if it exceeds days in new month (e.g. March 31 + 1 month = April 30)
+
     int daysInMonth[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
     if (leapYear(sixMonthsLater.getYear())) {
         daysInMonth[2] = 29;
@@ -125,7 +125,7 @@ void AvailRoomDatabase::appendAvailRooms()
 
 
     Date dateToAppend = lastDateInVector;
-    // Increment lastDateInVector by one day to start appending from the next day
+
     int daysInMonthLast[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
     if (leapYear(dateToAppend.getYear())) {
         daysInMonthLast[2] = 29;
@@ -153,7 +153,7 @@ void AvailRoomDatabase::appendAvailRooms()
         newAvailRoom.initAvailRooms();
         availRooms.push_back(newAvailRoom);
 
-        // Increment dateToAppend
+
         int daysInMonthCurrent[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
         if (leapYear(dateToAppend.getYear()))
         {
@@ -204,9 +204,9 @@ void AvailRoomDatabase::displayAvailableRooms( Date checkInDate, Date checkOutDa
 int AvailRoomDatabase::compMinNumRooms( int roomType,
                        const Date &checkInDate, const Date &checkOutDate )
 {
-    if (roomType < 1 || roomType > 5) // Assuming room types are 1-5
+    if (roomType < 1 || roomType > 5) 
     {
-        return 0; // Invalid room type
+        return 0; 
     }
 
     vector< AvailRoom >::iterator checkInIter;
@@ -216,10 +216,10 @@ int AvailRoomDatabase::compMinNumRooms( int roomType,
 
     if (checkInIter == availRooms.end() || checkOutIter == availRooms.end() || checkInIter == checkOutIter)
     {
-        return 0; // Dates not found or invalid range
+        return 0; 
     }
 
-    int minNumRooms = -1; // Initialize with a value that will be overwritten or indicates error
+    int minNumRooms = -1; 
 
     for (vector< AvailRoom >::iterator it = checkInIter; it < checkOutIter; ++it)
     {
@@ -228,7 +228,7 @@ int AvailRoomDatabase::compMinNumRooms( int roomType,
             minNumRooms = it->getAvailRoom(roomType);
         }
     }
-    return (minNumRooms == -1) ? 0 : minNumRooms; // return 0 if no rooms found in range
+    return (minNumRooms == -1) ? 0 : minNumRooms; 
 
 
 }

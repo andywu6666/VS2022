@@ -23,9 +23,7 @@ void MakeReservation::execute()
 {
    Date currentDate = computeCurrentDate();
 
-   /*cout << "Current Date: " << currentDate.getYear() << "-"
-       << setw(2) << setfill('0') << currentDate.getMonth() << "-"
-       << setw(2) << setfill('0') << currentDate.getDay() << endl;*/
+
 
    Date availableMonths[ 7 ]; //6 is enough , adding 1 for assurance
 
@@ -49,7 +47,7 @@ void MakeReservation::execute()
         << setw( 2 ) << checkOutDate.getMonth() << '-'
         << setw( 2 ) << checkOutDate.getDay() << endl;
 
-   // Check if any rooms are available for the period before displaying the table
+
    bool anyPossiblyAvailableRooms = false;
    for (int roomType = 1; roomType <= 5; roomType++)
    {
@@ -118,7 +116,7 @@ void MakeReservation::execute()
            return;
        }
 
-       // User choice is 1-5, representing an attempt to select an actual room type
+
        roomType = choice;
        bool isValidChoice = false;
        for (size_t k = 0; k < availType.size(); ++k) {
@@ -130,7 +128,7 @@ void MakeReservation::execute()
        }
 
        if (isValidChoice) {
-           break; // Valid room type selected
+           break; 
        }
        else {
            goto showAvailType;
@@ -148,7 +146,7 @@ void MakeReservation::execute()
        numRooms = inputAnInteger(1, maxRoomsForChosenType);
    }
 
-   // Check availability again (though somewhat redundant if maxRoomsForChosenType is accurate)
+
    int minRoomsAvailable = availableRoomDatabase.compMinNumRooms(roomType, checkInDate, checkOutDate);
 
    if (numRooms <= minRoomsAvailable)
@@ -178,7 +176,7 @@ void MakeReservation::execute()
        cout << "\nReservation successfully!" << endl;
 
    }
-   else // This case should ideally not be reached if selection logic is correct
+   else 
    {
        cout << "\nSorry! The number of rooms you requested (" << numRooms
            << ") is not available for the selected period for " << roomTypeName[roomType] << ".\n"
@@ -214,15 +212,15 @@ void MakeReservation::inputCheckInDates( Date &checkInDate, Date currentDate,
      Date availableMonths[], int &checkInYMCode, int &firstDay, int &lastDay )
 {
     showCheckInOption:
-    cout << "\nPlease Input Check In Date\n"; // Adjusted prompt
-    cout << "\nMonth:\n"; // Adjusted prompt
+    cout << "\nPlease Input Check In Date\n"; 
+    cout << "\nMonth:\n"; 
     for (int i = 0; i < 6; ++i)
     {
         cout << i + 1 << ". " << availableMonths[i].getYear() << "-"
             << setw(2) << setfill('0') << availableMonths[i].getMonth() << endl;
     }
 
-    cout << "? "; // Adjusted prompt
+    cout << "? "; 
     int monthChoice = inputAnInteger(1, 6);
     while (monthChoice == -1) {
         goto showCheckInOption;
@@ -253,7 +251,7 @@ void MakeReservation::inputCheckInDates( Date &checkInDate, Date currentDate,
                 lastDay--;
 
     inputDays:
-    cout << "\nDay (" << firstDay << " ~ " << lastDay << "): "; // Adjusted prompt
+    cout << "\nDay (" << firstDay << " ~ " << lastDay << "): "; 
     int chosenDay = inputAnInteger(firstDay, lastDay);
     while (chosenDay == -1) {
         goto inputDays;
@@ -271,11 +269,11 @@ void MakeReservation::inputCheckOutDates( Date &checkOutDate, Date checkInDate,
 {
     int chosenYear = 0, chosenMonth = 0;
     int firstDayForCheckout = 0, lastDayForCheckout = 0;
-    bool validMonthSelected = false; // Renamed from validMonthSelectedLoop for clarity
+    bool validMonthSelected = false; 
 
     while (!validMonthSelected) {
-        cout << "\nPlease Input Check Out Date\n"; // Adjusted prompt
-        cout << "\nMonth:\n"; // Adjusted prompt
+        cout << "\nPlease Input Check Out Date\n"; 
+        cout << "\nMonth:\n"; 
         int displayOptionNumber = 1;
         for (int i = checkInYMCode; i < 6; ++i)
         {
@@ -283,7 +281,7 @@ void MakeReservation::inputCheckOutDates( Date &checkOutDate, Date checkInDate,
                 << setw(2) << setfill('0') << availableMonths[i].getMonth() << endl;
         }
 
-        cout << "? "; // Adjusted prompt
+        cout << "? "; 
         int monthChoiceRelative = inputAnInteger(1, 6 - checkInYMCode);
         while (monthChoiceRelative == -1) {
             cout << "Invalid choice. Please enter a number between 1 and " << 6 - checkInYMCode << ": ";
@@ -307,8 +305,8 @@ void MakeReservation::inputCheckOutDates( Date &checkOutDate, Date checkInDate,
             if (checkInDate.getDay() == lastDayForCheckout) {
                 cout << "Check-in is on the last day of this month (" << checkInDate.getYear() << "-" << checkInDate.getMonth() << "-" << checkInDate.getDay()
                     << "). Please select a later month for check-out." << endl;
-                // validMonthSelected remains false, loop will continue
-                continue; // Restart month selection
+
+                continue; 
             }
             firstDayForCheckout = checkInDate.getDay() + 1;
         }
@@ -326,7 +324,7 @@ void MakeReservation::inputCheckOutDates( Date &checkOutDate, Date checkInDate,
         validMonthSelected = true;
     }
 
-    cout << "\nDay (" << firstDayForCheckout << " ~ " << lastDayForCheckout << "): "; // Adjusted prompt
+    cout << "\nDay (" << firstDayForCheckout << " ~ " << lastDayForCheckout << "): "; 
     int chosenDay;
     do {
         chosenDay = inputAnInteger(firstDayForCheckout, lastDayForCheckout);
