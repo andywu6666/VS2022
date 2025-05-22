@@ -106,7 +106,7 @@ void MakeReservation::execute()
        
         choice = inputAnInteger(1, 6);
        if (choice == -1) {
-          // cout << "Invalid input. Please enter a number: ";
+           cout << "Invalid input. Please enter a number: ";
            goto showAvailType;
        }
 
@@ -221,14 +221,14 @@ void MakeReservation::inputCheckInDates( Date &checkInDate, Date currentDate,
     }
 
     cout << "? "; 
-     checkInYMCode = inputAnInteger(1, 6);
-    while (checkInYMCode == -1) {
+    int monthChoice = inputAnInteger(1, 6);
+    while (monthChoice == -1) {
         goto showCheckInOption;
     }
-   
+    checkInYMCode = monthChoice - 1;
 
-    int chosenYear = availableMonths[checkInYMCode -1].getYear();
-    int chosenMonth = availableMonths[checkInYMCode -1].getMonth();
+    int chosenYear = availableMonths[checkInYMCode].getYear();
+    int chosenMonth = availableMonths[checkInYMCode].getMonth();
 
     if (chosenYear == currentDate.getYear() && chosenMonth == currentDate.getMonth())
     {
@@ -246,7 +246,7 @@ void MakeReservation::inputCheckInDates( Date &checkInDate, Date currentDate,
     }
         lastDay = daysInMonth[chosenMonth];
     
-        if (checkInYMCode == 6)
+        if (checkInYMCode == 5)
             if (lastDay == 31)
                 lastDay--;
 
