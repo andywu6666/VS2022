@@ -106,7 +106,7 @@ void MakeReservation::execute()
        
         choice = inputAnInteger(1, 6);
        if (choice == -1) {
-           cout << "Invalid input. Please enter a number: ";
+          // cout << "Invalid input. Please enter a number: ";
            goto showAvailType;
        }
 
