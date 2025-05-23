@@ -34,21 +34,18 @@ void AvailRoomDatabase::loadAvailableRooms()
 {
     availRooms.clear();
     ifstream inFile(availFileName, ios::in | ios::binary);
-
     if (!inFile)
     {
-        cout << "File could not be opened " << endl;
+        cout << "File could not be opened!" << endl;
         return;
     }
     AvailRoom room;
-    
-    while (inFile.read(reinterpret_cast<char*>(&room), sizeof(AvailRoom))) {
-       
-            availRooms.push_back(room);
+    while (inFile.read(reinterpret_cast<char*>(&room), sizeof(AvailRoom)))
+    {
+        availRooms.push_back(room);
     }
+
     inFile.close();
-
-
 }
 
 void AvailRoomDatabase::initAvailRooms()
@@ -57,30 +54,27 @@ void AvailRoomDatabase::initAvailRooms()
     Date tempDate = currentDate;
     AvailRoom currentAvailRoom;
 
-
-    for (int i = 0; i < 180; ++i) 
+    for (int i = 0;i < 180; i++)
     {
-        currentAvailRoom.setDate(tempDate.getYear(), tempDate.getMonth(), tempDate.getDay());
-        currentAvailRoom.initAvailRooms(); 
+        currentAvailRoom.setDate( tempDate.getYear(), tempDate.getMonth(), tempDate.getDay());
+        currentAvailRoom.initAvailRooms();
         availRooms.push_back(currentAvailRoom);
-
-        // Increment date
-        int daysInMonth[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-        if (leapYear(tempDate.getYear()))
-        {
-            daysInMonth[2] = 29;
-        }
 
         int day = tempDate.getDay() + 1;
         int month = tempDate.getMonth();
         int year = tempDate.getYear();
 
+        int daysInMonth[13] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+        if (leapYear(year))
+        {
+            daysInMonth[2] = 29;
+        }
+
         if (day > daysInMonth[month])
         {
             day = 1;
             month++;
-            if (month > 12)
-            {
+            if (month > 12) {
                 month = 1;
                 year++;
             }
@@ -88,8 +82,8 @@ void AvailRoomDatabase::initAvailRooms()
         tempDate.setDay(day);
         tempDate.setMonth(month);
         tempDate.setYear(year);
-    }
 
+    }
 
 }
 
