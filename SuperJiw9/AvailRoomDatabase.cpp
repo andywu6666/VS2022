@@ -284,14 +284,10 @@ void AvailRoomDatabase::findIterators( const Date &checkInDate, const Date &chec
     for (vector< AvailRoom > ::iterator it = availRooms.begin(); it != availRooms.end(); it++)
     {
         if (it->getDate() == checkInDate)
-        {
             checkInIterator = it;
-        }
-        if (it->getDate() == checkOutDate)
-        {
-            checkOutIterator = it;
-        }
-    }
 
+        if (it->getDate() == checkOutDate)
+            checkOutIterator = it;
+    }
 
 }
