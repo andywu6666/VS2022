@@ -95,82 +95,75 @@ void AvailRoomDatabase::appendAvailRooms()
         return;
     }
 
-    Date lastDateInVector = availRooms.back().getDate();
-    Date currentDate = computeCurrentDate();
-    Date sixMonthsLater = currentDate;
+    Date dateToAppend = availRooms.back().getDate();
+    int year = dateToAppend.getYear();
+    int month = dateToAppend.getMonth();
+    int day = dateToAppend.getDay();
 
-
-    int month = sixMonthsLater.getMonth() + 6;
-    int year = sixMonthsLater.getYear();
-    while (month > 12) {
-        month -= 12;
+    int dayMonth1[13] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    if (leapYear(year))
+    {
+        dayMonth1[2] = 29;
+    }
+    day++;
+    if (day > dayMonth1[month])
+    {
+        day = 1;
+        month++;
+    }
+    if (month > 12)
+    {
+        month = 1;
         year++;
     }
-    sixMonthsLater.setMonth(month);
-    sixMonthsLater.setYear(year);
-
-    int daysInMonth[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-    if (leapYear(sixMonthsLater.getYear())) {
-        daysInMonth[2] = 29;
-    }
-    if (sixMonthsLater.getDay() > daysInMonth[sixMonthsLater.getMonth()]) {
-        sixMonthsLater.setDay(daysInMonth[sixMonthsLater.getMonth()]);
-    }
-
-
-    Date dateToAppend = lastDateInVector;
-
-    int daysInMonthLast[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-    if (leapYear(dateToAppend.getYear())) {
-        daysInMonthLast[2] = 29;
-    }
-    int day = dateToAppend.getDay() + 1;
-    int m = dateToAppend.getMonth();
-    int y = dateToAppend.getYear();
-    if (day > daysInMonthLast[m]) {
-        day = 1;
-        m++;
-        if (m > 12) {
-            m = 1;
-            y++;
-        }
-    }
+    dateToAppend.setYear(year);
+    dateToAppend.setMonth(month);
     dateToAppend.setDay(day);
-    dateToAppend.setMonth(m);
-    dateToAppend.setYear(y);
 
+    Date sixMonthLater = computeCurrentDate();
+    int sYear = sixMonthLater.getYear();
+    int sMonth = sixMonthLater.getMonth() + 6;
 
-    AvailRoom newAvailRoom;
-    while (dateToAppend <= sixMonthsLater)
+    int dayMonth2[13] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+    if (leapYear(sYear))
     {
-        newAvailRoom.setDate(dateToAppend.getYear(), dateToAppend.getMonth(), dateToAppend.getDay());
-        newAvailRoom.initAvailRooms();
-        availRooms.push_back(newAvailRoom);
-
-
-        int daysInMonthCurrent[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-        if (leapYear(dateToAppend.getYear()))
-        {
-            daysInMonthCurrent[2] = 29;
-        }
-        int d = dateToAppend.getDay() + 1;
-        int mo = dateToAppend.getMonth();
-        int ye = dateToAppend.getYear();
-        if (d > daysInMonthCurrent[mo])
-        {
-            d = 1;
-            mo++;
-            if (mo > 12)
-            {
-                mo = 1;
-                ye++;
-            }
-        }
-        dateToAppend.setDay(d);
-        dateToAppend.setMonth(mo);
-        dateToAppend.setYear(ye);
+        dayMonth2[2] = 29;
+    }
+    if (sMonth > 12)
+    {
+        sMonth = 1;
+        sYear++;
     }
 
+    sixMonthLater.setYear(sYear);
+    sixMonthLater.setMonth(sMonth);
+
+    AvailRoom newEntry;
+    while (dateToAppend <= sixMonthLater)
+    {
+        newEntry.setDate(dateToAppend.getYear(), dateToAppend.getMonth(), dateToAppend.getDay());
+        newEntry.initAvailRooms();
+        availRooms.push_back(newEntry);
+
+        if (leapYear(year))
+        {
+            dayMonth1[2] = 29;
+        }
+        day++;
+        if (day > dayMonth1[month])
+        {
+            day = 1;
+            month++;
+        }
+        if (month > 12)
+        {
+            month = 1;
+            year++;
+        }
+        dateToAppend.setYear(year);
+        dateToAppend.setMonth(month);
+        dateToAppend.setDay(day);
+    }
 
 }
 
