@@ -198,55 +198,31 @@ void AvailRoomDatabase::displayAvailableRooms( Date checkInDate, Date checkOutDa
 int AvailRoomDatabase::compMinNumRooms( int roomType,
                        const Date &checkInDate, const Date &checkOutDate )
 {
-    if (roomType < 1 || roomType > 5) 
-    {
-        return 0; 
-    }
-
-    vector< AvailRoom >::iterator checkInIter;
-    vector< AvailRoom >::iterator checkOutIter;
+    vector<AvailRoom>::iterator checkInIter;
+    vector<AvailRoom>::iterator checkOutIter;
 
     findIterators(checkInDate, checkOutDate, checkInIter, checkOutIter);
 
-    if (checkInIter == availRooms.end() || checkOutIter == availRooms.end() || checkInIter == checkOutIter)
-    {
-        return 0; 
-    }
-
-    int minNumRooms = -1; 
-
-    for (vector< AvailRoom >::iterator it = checkInIter; it < checkOutIter; ++it)
+    int minNumRooms = -1;
+    for (vector<AvailRoom>::iterator it = checkInIter; it < checkOutIter; it++)
     {
         if (minNumRooms == -1 || it->getAvailRoom(roomType) < minNumRooms)
-        {
-            minNumRooms = it->getAvailRoom(roomType);
-        }
+        minNumRooms = it->getAvailRoom(roomType);
     }
-    return (minNumRooms == -1) ? 0 : minNumRooms; 
 
-
+    return (minNumRooms == -1) ? 0 : minNumRooms;
 }
 
 void AvailRoomDatabase::decreaseAvailRooms( int roomType, int numRooms,
                         const Date &checkInDate, const Date &checkOutDate )
 {
-    if (roomType < 1 || roomType > 5 || numRooms <= 0)
-    {
-        return; // Invalid input
-    }
 
-    vector< AvailRoom >::iterator checkInIter;
-    vector< AvailRoom >::iterator checkOutIter;
+    vector<AvailRoom>::iterator checkInIter;
+    vector<AvailRoom>::iterator checkOutIter;
 
     findIterators(checkInDate, checkOutDate, checkInIter, checkOutIter);
 
-    if (checkInIter == availRooms.end() || checkOutIter == availRooms.end() || checkInIter == checkOutIter)
-    {
-        cout << "Dates not found or invalid range" << endl;
-        return; // Dates not found or invalid range
-    }
-
-    for (vector< AvailRoom >::iterator it = checkInIter; it < checkOutIter; ++it)
+    for (vector<AvailRoom>::iterator it = checkInIter; it != checkOutIter; it++)
     {
         it->decreaseAvailRooms(roomType, numRooms);
     }
