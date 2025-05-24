@@ -260,17 +260,15 @@ void AvailRoomDatabase::saveAvailableRooms()
 
     if (!outFile)
     {
-        cout << "File could not be opened!";
+        cout << "File could not be saved!" << endl;
         system("pause");
         exit(1);
     }
-    
-    for (size_t i = 0; i < availRooms.size(); i++)
-    {
-        outFile.write(reinterpret_cast<const char*>(&availRooms[i] ), sizeof(AvailRoom));
-    }
-    outFile.close();
 
+    for (size_t i = 0; i < availRooms.size(); i++)
+        outFile.write(reinterpret_cast<const char*>(&availRooms[i]), sizeof(AvailRoom));
+
+    outFile.close();
 
 }
 
