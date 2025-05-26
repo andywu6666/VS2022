@@ -85,29 +85,29 @@ bool Date::operator>=( const Date &date2 )
 // return *this - date2 provided that *this > date2
 int Date::operator-( const Date &date2 )
 {
+    tm tm1 = { 0 };
+    tm1.tm_year = this->year - 1900;
+    tm1.tm_mon = this->month - 1;
+    tm1.tm_mday = this->day;
+    tm1.tm_hour = 12;
+    tm1.tm_isdst = -1;
 
-    int days[13] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+    tm tm2 = { 0 };
+    tm2.tm_year = date2.year -1900;
+    tm2.tm_mon = date2.month - 1;
+    tm2.tm_mday = date2.day;
+    tm2.tm_hour = 12;
+    tm2.tm_isdst = -1;
 
-    // Helper to count days since 1/1/2000 for a given date
-    int daysFrom2000 = 0;
-    int daysFrom2000_date2 = 0;
-    int i, j;
+    time_t time_t1 = mktime(&tm1);
+    time_t time_t2 = mktime(&tm2);
 
-    // Count days for *this
-    for (i = 2000; i < year; i++)
-        daysFrom2000 += leapYear(i) ? 366 : 365;
-    for (j = 1; j < month; j++)
-        daysFrom2000 += (j == 2 && leapYear(year)) ? 29 : days[j];
-    daysFrom2000 += day - 1;
+    double differ_second = difftime(time_t1, time_t2);
+    return static_cast<int>( differ_second / 24 * 60 * 60 );
 
-    // Count days for date2
-    for (i = 2000; i < date2.year; i++)
-        daysFrom2000_date2 += leapYear(i) ? 366 : 365;
-    for (j = 1; j < date2.month; j++)
-        daysFrom2000_date2 += (j == 2 && leapYear(date2.year)) ? 29 : days[j];
-    daysFrom2000_date2 += date2.day - 1;
+    
 
-    return daysFrom2000 - daysFrom2000_date2;
+   
 
 
 }

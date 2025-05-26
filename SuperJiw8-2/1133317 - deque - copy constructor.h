@@ -357,7 +357,7 @@ public:
          //using MapPtr = typename ScaryVal::MapPtr;
          // using MapPtr = Ty**;
 
-         myData.map = new MapPtr[myData.mapSize]; 
+         myData.map = new MapPtr[myData.mapSize](); 
          myData.myOff = (myData.mapSize / 2) * dequeSize - (myData.mySize / 2);
 
          size_type start = myData.myOff;
