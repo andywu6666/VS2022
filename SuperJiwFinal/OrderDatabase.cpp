@@ -33,6 +33,10 @@ void OrderDatabase::loadOrderDetails()
     Order infor;
     while (inFile.read(reinterpret_cast<char*>(&infor), sizeof(Order)))
     {
+        if (infor.getDeliveryDate() < computeCurrentDate()) //add
+            continue;//add
+        
+            continue;
         orders.push_back(infor);
     }
 
