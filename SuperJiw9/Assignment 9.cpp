@@ -83,7 +83,7 @@ int inputAnInteger( int begin, int end )
 Date computeCurrentDate()
 {
    tm structuredTime;
-   time_t rawTime = time( 0 ) - 24 * 60 * 60 * 17; //25/05/22 - 17
+   time_t rawTime = time( 0 ) - 24 * 60 * 60 * 18; //25/05/23 - 18
    localtime_s( &structuredTime, &rawTime );
 
    int year = structuredTime.tm_year + 1900;
