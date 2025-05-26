@@ -106,7 +106,7 @@ Date Date::operator+( int numDays )
            days[2] = 29; //add
        else //add
            days[2] = 28; //add
-       date.day = 1;
+       date.day -= days[date.month]; //modify
        date.month++;
 
        if (date.month > 12) //move to
