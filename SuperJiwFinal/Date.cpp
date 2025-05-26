@@ -95,15 +95,25 @@ Date Date::operator+( int numDays )
    Date date( *this );
    date.day += numDays;
 
-   if (date.month > 12)
+  /* if (date.month > 12) //move from
    {
        date.month = 1;
        date.year++;
-   }
-   if (date.day > days[date.month])
+   }*/
+   while (date.day > days[date.month])
    {
+       if (leapYear(year)) //add
+           days[2] = 29; //add
+       else //add
+           days[2] = 28; //add
        date.day = 1;
        date.month++;
+
+       if (date.month > 12) //move to
+       {
+           date.month = 1; //move to
+           date.year++; //move to
+       }
    }
 
    return date; // reference return to create an lvalue
