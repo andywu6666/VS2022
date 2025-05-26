@@ -119,6 +119,7 @@ void registration( AccountDatabase &accountDatabase )
     cout << "Enter your e-mail address (account number) (0 to end): ";
    string email;
    cin >> email;
+   cin.ignore(); // add
    if (email == "0") return;
    if (accountDatabase.existAccount(email))
    {
