@@ -115,14 +115,17 @@ bool leapYear( int year )
 
 void registration( AccountDatabase &accountDatabase )
 {
+    enterEmail:
+    cout << "Enter your e-mail address (account number) (0 to end): ";
    string email;
-
-
-
-
-
-
-
+   cin >> email;
+   if (email == "0") return;
+   if (accountDatabase.existAccount(email))
+   {
+       cout << "An account already exists with the e-mail!" << endl;
+       goto enterEmail;
+   }
+   
    cout << "\nEnter your password: ";
    string password;
    cin >> password;

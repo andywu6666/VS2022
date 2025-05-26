@@ -4,6 +4,7 @@
 #include "OrderDatabase.h" // OrderDatabase class definition
 #include "MakingOrder.h" // MakingOrder class definition
 
+
 extern int inputAnInteger( int begin, int end = INT_MAX );
 extern Date computeCurrentDate();
 
@@ -60,8 +61,24 @@ void Login::run()
 
 void Login::authenticateUser( string &email, string &password )
 {
+    inputEmail:
+    cout << "\nEmail (Account number) (0 to end): ";
+    cin >> email;
+     if (email == "0") return;
+     if (!accountDatabase.existAccount(email)) {
+         cout << "\nNo account exists with the e-mail!\n"; goto inputEmail;
+     }
+    inputPassword:
+    cout << "\nPassword: ";
+    cin >> password;
+    if (password == "0") return;
+    if (accountDatabase.authenticateUser(email, password)) {
+        cout << "Invalid password. Please try again.\n"; goto inputPassword;
+    }
 
 
+    
+    
 
 
 
@@ -78,11 +95,19 @@ void Login::displayCart( string email )
 
 void Login::checkout( string email )
 {
-
-
-
-
-
+    if (orderDatabase.existOrders(email)) {
+        cout << "\nOrder Number: " << orderDatabase.generateOrderNumber();
+        cout << "\nFull Name: " << accountDatabase.getName(email);
+        cout << "\nShipping Address: " << accountDatabase.getAddress(email);
+        cout << "\nBank account: ¦X§@ª÷®w 0062013162077139" << endl;
+        orderDatabase.displayOrders(email, accountDatabase.getName(email));
+        cout << endl;
+        deliveryDate();
+    }
+    else
+    {
+        cout << "\nYou shopping cart is empty!\n";
+    }
 }
 
 void Login::displayOrderHistory( string email )

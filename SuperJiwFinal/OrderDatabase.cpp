@@ -23,7 +23,20 @@ OrderDatabase::~OrderDatabase()
 
 void OrderDatabase::loadOrderDetails()
 {
+    ifstream inFile("Orders.dat", ios::in | ios::binary);
+    if (!inFile)
+    {
+        cout << "There are no orders yet! (or not correctly opened...)" << endl;
+        return;
+    }
 
+    Order infor;
+    while (inFile.read(reinterpret_cast<char*>(&infor), sizeof(Order)))
+    {
+        orders.push_back(infor);
+    }
+
+    inFile.close();
 
 
 
@@ -64,7 +77,7 @@ void OrderDatabase::displayOrders( string email, string name ) const
    for( size_t i = 0; i < orders.size(); i++ )
       if( orders[ i ].getEmail() == email )
       {
-         cout << endl << setw( 9 ) << "Item Code" << setw( 60 ) << "Item" << setw( 7 ) << "Price"
+         cout << endl << setw( 9 ) << "Item Code" << setw( 60 ) << "Item" << setw(7) << "Price"
               << setw( 10 ) << "Quantity" << setw( 10 ) << "Subtotal" << endl;
          orders[ i ].displayOrderDetails();
       }
@@ -72,7 +85,21 @@ void OrderDatabase::displayOrders( string email, string name ) const
 
 void OrderDatabase::saveOrderDetails()
 {
+    ofstream outFile("Orders.dat", ios::out | ios::binary);
 
+    if (!outFile)
+    {
+        cout << "The file Orders.dat can't be written!" << endl;
+        system("pause");
+        exit(1);
+    }
+
+
+    for (size_t i = 0; i < orders.size(); i++)
+    {
+        outFile.write(reinterpret_cast<const char*>(&orders[i]), sizeof(Order));
+    }
+    outFile.close();
 
 
 

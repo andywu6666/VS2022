@@ -16,11 +16,20 @@ AccountDatabase::~AccountDatabase()
 
 void AccountDatabase::loadAccountDetails()
 {
+    ifstream inFile("Accounts.dat", ios::in | ios::binary);
+    if (!inFile)
+    {
+        cout << "There are no accounts registered yet! (or not correctly opened...)" << endl;
+        return;
+    }
 
+    Account infor;
+    while (inFile.read(reinterpret_cast<char*>(&infor), sizeof(Account)))
+    {
+        accounts.push_back(infor);
+    }
 
-
-
-
+    inFile.close();
 }
 
 // determine whether user-specified email address and password match
@@ -112,18 +121,41 @@ void AccountDatabase::displayOrders( string email )
 
 void AccountDatabase::saveAccountDetails()
 {
+    ofstream outFile("Accounts.dat", ios::out | ios::binary);
 
+    if (!outFile)
+    {
+        cout << "The file Account.dat can't be written!" << endl;
+        system("pause");
+        exit(1);
+    }
 
-
+    
+    for (size_t i = 0; i < accounts.size(); i++)
+    {
+        outFile.write(reinterpret_cast<const char*>(&accounts[i]), sizeof(Account));
+    }
+    outFile.close();
 
 
 }
 
-Account* AccountDatabase::getAccount( string email )
+Account* AccountDatabase::getAccount( string email ) // finding where this email address located? //something wrong
 {
 
+   /* Account* accountPtr = getAccount(email);
+    if (accountPtr->getEmail() == email)
+    return accountPtr;
+    
+    
+    return nullptr;*/
+    vector<Account>::iterator ptr = accounts.begin();
+    for (;ptr < accounts.end() ; ptr++)
+    {
+        if (email == ptr->getEmail())
+        return &*ptr;
+    }
 
-
-
+    return nullptr;
 
 }

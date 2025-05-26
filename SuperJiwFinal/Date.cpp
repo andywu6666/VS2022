@@ -86,6 +86,7 @@ bool Date::operator<=( const Date &date2 )
 
 Date Date::operator+( int numDays )
 {
+
    int days[ 13 ] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
    if( leapYear( year ) )
@@ -94,10 +95,16 @@ Date Date::operator+( int numDays )
    Date date( *this );
    date.day += numDays;
 
-
-
-
-
+   if (date.month > 12)
+   {
+       date.month = 1;
+       date.year++;
+   }
+   if (date.day > days[date.month])
+   {
+       date.day = 1;
+       date.month++;
+   }
 
    return date; // reference return to create an lvalue
 }
