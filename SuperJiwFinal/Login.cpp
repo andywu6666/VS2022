@@ -64,6 +64,7 @@ void Login::authenticateUser( string &email, string &password )
     inputEmail:
     cout << "\nEmail (Account number) (0 to end): ";
     cin >> email;
+    cin.ignore(); //add
      if (email == "0") return;
      if (!accountDatabase.existAccount(email)) {
          cout << "\nNo account exists with the e-mail!\n"; goto inputEmail;
@@ -71,8 +72,9 @@ void Login::authenticateUser( string &email, string &password )
     inputPassword:
     cout << "\nPassword: ";
     cin >> password;
+    cin.ignore(); //add
     if (password == "0") return;
-    if (accountDatabase.authenticateUser(email, password)) {
+    if (!accountDatabase.authenticateUser(email, password)) { //modify
         cout << "Invalid password. Please try again.\n"; goto inputPassword;
     }
 
@@ -95,18 +97,39 @@ void Login::displayCart( string email )
 
 void Login::checkout( string email )
 {
-    if (orderDatabase.existOrders(email)) {
-        cout << "\nOrder Number: " << orderDatabase.generateOrderNumber();
-        cout << "\nFull Name: " << accountDatabase.getName(email);
-        cout << "\nShipping Address: " << accountDatabase.getAddress(email);
-        cout << "\nBank account: ¦X§@ª÷®w 0062013162077139" << endl;
-        orderDatabase.displayOrders(email, accountDatabase.getName(email));
-        cout << endl;
-        deliveryDate();
+    if (!accountDatabase.emptyCart(email)) { // modify
+        cout << "\nOrder Number: " << orderDatabase.generateOrderNumber() << endl; //modify
+        cout << "\nFull Name: " << accountDatabase.getName(email) << endl; //modify
+        cout << "\nShipping Address: " << accountDatabase.getAddress(email) << endl;  //modify
+        cout << "\nBank account: åˆä½œé‡‘åº« 0062013162077139" << endl;
+        
+        Order newOrder(orderDatabase.generateOrderNumber(), email); //add
+        newOrder.setOrderDetails(accountDatabase.getCart(email)); //add
+        
+        cout << endl << setw(9) << "Item Code" << setw(60) << "Item" << setw(7) << "Price" << setw(10) << "Quantity" << setw(10) << "Subtotal" << endl; //add
+        int total = 0; //add
+        for (int i = 1; i < 14; i++) //add
+        {
+            if (accountDatabase.getCart(email)[i] > 0) //add
+            {
+                cout << setw(9) << i << setw(60) << foods[i] << setw(7) << price[i] //add
+                    << setw(10) << accountDatabase.getCart(email)[i]
+                    << setw(10) << price[i] * accountDatabase.getCart(email)[i] << endl;
+
+                total += accountDatabase.getCart(email)[i] * price[i]; //add
+            }
+        }
+        cout << "\nTotal: " << total << endl; //add
+        newOrder.setDeliveryDate(deliveryDate()); //modify
+        orderDatabase.pushBack(newOrder); //modify
+        accountDatabase.resetCart(email); //add
+       // cout << endl; //delete
+       
     }
     else
     {
         cout << "\nYou shopping cart is empty!\n";
+        return; //add;
     }
 }
 
