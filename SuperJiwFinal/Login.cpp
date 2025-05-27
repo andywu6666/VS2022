@@ -97,13 +97,14 @@ void Login::displayCart( string email )
 
 void Login::checkout( string email )
 {
+    string orderNumber = orderDatabase.generateOrderNumber(); //add
     if (!accountDatabase.emptyCart(email)) { // modify
-        cout << "\nOrder Number: " << orderDatabase.generateOrderNumber() << endl; //modify
+        cout << "\nOrder Number: " << orderNumber << endl; //modify
         cout << "\nFull Name: " << accountDatabase.getName(email) << endl; //modify
         cout << "\nShipping Address: " << accountDatabase.getAddress(email) << endl;  //modify
         cout << "\nBank account: 合作金庫 0062013162077139" << endl;
         
-        Order newOrder(orderDatabase.generateOrderNumber(), email); //add
+        Order newOrder(orderNumber, email); //add
         newOrder.setOrderDetails(accountDatabase.getCart(email)); //add
         
         cout << endl << setw(9) << "Item Code" << setw(60) << "Item" << setw(7) << "Price" << setw(10) << "Quantity" << setw(10) << "Subtotal" << endl; //add
