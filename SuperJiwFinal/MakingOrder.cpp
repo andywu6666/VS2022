@@ -14,14 +14,14 @@ void MakingOrder::run()
 {
     int newCart[14], * oldCart = accountDatabase.getCart(email); //add
     Account user(email); //modify
-    user.setCart(newCart); //modify
+   // user.setCart(newCart); //modify
 
    
     int foodCode = -1; //modify
-    int quantity = newCart[foodCode]; //modify
+    int quantity = 0; 
 
     //showing Cart
-    user.displayCart();
+   // user.displayCart();
 
    
     if (oldCart != nullptr) //add
@@ -30,6 +30,14 @@ void MakingOrder::run()
             newCart[i] = (oldCart[i] >= 0 ? oldCart[i] : 0); //add
         }
     }
+    else //add
+    {
+        for (int j = 0; j < 14; j++) //add
+            newCart[j] = 0; //add
+    }
+    user.setCart(newCart); //add
+    user.displayCart(); //add
+
     do { //add
         cout << "\nEnter foods code  (0 to end): ";
 
@@ -42,6 +50,7 @@ void MakingOrder::run()
     cout << "\nEnter quantity: ";
     cin >> quantity;
     cin.ignore(); //add
+    newCart[foodCode] = quantity; //add
 
     bool backToTop = false; 
     while (!backToTop) 
@@ -51,7 +60,7 @@ void MakingOrder::run()
             << "3. Abandon\n";
 
         int choice;
-        do cout << "Enter your choice: (1~3): ";
+        do cout << "\nEnter your choice: (1~3): "; //modify
         while ((choice = inputAnInteger(1, 3)) == -1);
 
         user.setCart(newCart); //add

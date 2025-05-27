@@ -93,7 +93,7 @@ Date computeCurrentDate()
 {
    tm structuredTime;
 //   time_t rawTime = time( 0 ) + 5 * 24 * 60 * 60;
-   time_t rawTime = time( 0 );
+   time_t rawTime = time( 0 ) - 3 * 24 * 60 * 60; 
    localtime_s( &structuredTime, &rawTime );
 
    int year = structuredTime.tm_year + 1900;
@@ -116,14 +116,14 @@ bool leapYear( int year )
 void registration( AccountDatabase &accountDatabase )
 {
     enterEmail:
-    cout << "Enter your e-mail address (account number) (0 to end): ";
+    cout << "\nEnter your e-mail address (account number) (0 to end): "; //modify
    string email;
    cin >> email;
    cin.ignore(); // add
    if (email == "0") return;
    if (accountDatabase.existAccount(email))
    {
-       cout << "An account already exists with the e-mail!" << endl;
+       cout << "\nAn account already exists with the e-mail!" << endl; //modify
        goto enterEmail;
    }
    
