@@ -384,34 +384,24 @@ public:
          }
          else
          {  // copy data from right to the current object
-             
-             
-             myData.myOff = right.myData.myOff;
+   size_type dequeSize = compDequeSize();
+   myData.myOff = (myData.myOff / dequeSize) * dequeSize; // align offset
 
-             for (size_type i = 0; i < myData.mySize; ++i)
-             {
-                 // Determine source element details from 'right'
-                 size_type source_logical_offset = right.myData.myOff + i;
-                 size_type source_map_block_index = right.getBlock(source_logical_offset);
-                 size_type source_element_in_block_offset = source_logical_offset % dequeSize;
+   size_type start = myData.myOff;
+   for (size_type i = 0; i < myData.mySize; ++i)
+   {
+      size_type block = getBlock(start + i);
+      size_type off = (start + i) % dequeSize;
 
-                 // Determine destination details in 'this'
-                 size_type destination_logical_offset = myData.myOff + i;
-                 size_type destination_map_block_index = this->getBlock(destination_logical_offset);
-                 size_type destination_element_in_block_offset = destination_logical_offset % dequeSize;
+      size_type rBlock = right.getBlock(right.myData.myOff + i);
+      size_type rOff = (right.myData.myOff + i) % dequeSize;
 
-                 // Ensure destination block exists in 'this->myData.map'.
-                 // Since we cleared all old blocks or got a fresh map from enlargeMap,
-                 // any needed block will require allocation if its map slot is nullptr.
-                 if (myData.map[destination_map_block_index] == nullptr)
-                 {
-                     myData.map[destination_map_block_index] = new value_type[dequeSize];
-                 }
+      if (myData.map[block] == nullptr)
+         myData.map[block] = new value_type[dequeSize];
 
-                 // Copy the element.
-                 myData.map[destination_map_block_index][destination_element_in_block_offset] =
-                     right.myData.map[source_map_block_index][source_element_in_block_offset];
-             }
+      myData.map[block][off] = right.myData.map[rBlock][rOff];
+   }
+
 
          }
       }
