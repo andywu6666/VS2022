@@ -352,7 +352,34 @@ public:
             while (myData.mySize > dequeSize * (myData.mapSize - 1))
                 myData.mapSize *= 2;
 
+            myData.map = new Ty * [myData.mapSize]();
+            myData.myOff = 0;
 
+            if (myData.mySize > 0) { // Redundant check as outer if already covers this, but safe.
+                const_iterator source_iter = right.begin(); // Iterator for the source deque
+
+                for (size_type i = 0; i < myData.mySize; ++i) {
+                    // Get the value of the i-th logical element from 'right'
+                    value_type valueToCopy = *source_iter;
+                    ++source_iter; // Advance source iterator for the next element
+
+                    // Determine the physical location for the i-th logical element in 'this' deque.
+                    // Since myData.myOff is 0, the absolute logical offset is simply 'i'.
+                    size_type destinationAbsoluteLogicalOffset = myData.myOff + i;
+
+                    size_type destinationMapBlockIndex = this->getBlock(destinationAbsoluteLogicalOffset);
+                    size_type destinationElementInBlockOffset = destinationAbsoluteLogicalOffset % dequeSize;
+
+                    // Ensure the target block in 'this->myData.map' is allocated
+                    if (myData.map[destinationMapBlockIndex] == nullptr) {
+                        myData.map[destinationMapBlockIndex] = new Ty[dequeSize];
+                        // Note: Elements in new Ty[dequeSize] are default-initialized.
+                    }
+
+                    // Copy the value to the determined physical location
+                    myData.map[destinationMapBlockIndex][destinationElementInBlockOffset] = valueToCopy;
+                }
+            }
 
         }
     }
