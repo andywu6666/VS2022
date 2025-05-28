@@ -373,12 +373,45 @@ public:
 
          myData.mySize = right.myData.mySize;
 
-         if( right.myData.mySize == 0 )
+         if (right.myData.mySize == 0) {
              myData.myOff = 0;
+             for (size_type i = 0; i < myData.mapSize; ++i) {
+                 if (myData.map[i] != nullptr) {
+                     delete[] myData.map[i];
+                     myData.map[i] = nullptr;
+                 }
+             }
+         }
          else
          {  // copy data from right to the current object
+             
+             
+             myData.myOff = right.myData.myOff;
 
+             for (size_type i = 0; i < myData.mySize; ++i)
+             {
+                 // Determine source element details from 'right'
+                 size_type source_logical_offset = right.myData.myOff + i;
+                 size_type source_map_block_index = right.getBlock(source_logical_offset);
+                 size_type source_element_in_block_offset = source_logical_offset % dequeSize;
 
+                 // Determine destination details in 'this'
+                 size_type destination_logical_offset = myData.myOff + i;
+                 size_type destination_map_block_index = this->getBlock(destination_logical_offset);
+                 size_type destination_element_in_block_offset = destination_logical_offset % dequeSize;
+
+                 // Ensure destination block exists in 'this->myData.map'.
+                 // Since we cleared all old blocks or got a fresh map from enlargeMap,
+                 // any needed block will require allocation if its map slot is nullptr.
+                 if (myData.map[destination_map_block_index] == nullptr)
+                 {
+                     myData.map[destination_map_block_index] = new value_type[dequeSize];
+                 }
+
+                 // Copy the element.
+                 myData.map[destination_map_block_index][destination_element_in_block_offset] =
+                     right.myData.map[source_map_block_index][source_element_in_block_offset];
+             }
 
          }
       }
@@ -456,8 +489,49 @@ private:
 
       if( myData.mySize > 0 )
       {
+          size_type dequeSize = compDequeSize();
+          value_type** const oldMapPtrArray = myData.map;
+          for (size_type i = 0; i < myData.mySize; ++i)
+          {
+              size_type current_logical_offset = myData.myOff + i; // Absolute logical offset of the element
 
+              // Calculate block index in the OLD map structure using oldMapSize
+              size_type old_map_block_index = (current_logical_offset / dequeSize) % oldMapSize;
 
+              // Calculate block index in the NEW map structure using new myData.mapSize
+              size_type new_map_block_index = (current_logical_offset / dequeSize) % myData.mapSize;
+
+              // If the block from the old map exists (it should, for valid elements)
+              // and if the corresponding slot in newMap is still nullptr (meaning we haven't
+              // copied this specific block pointer yet during this remapping process),
+              // then copy the block pointer.
+              if (oldMapPtrArray[old_map_block_index] != nullptr)
+              {
+                  if (newMap[new_map_block_index] == nullptr)
+                  {
+                      newMap[new_map_block_index] = oldMapPtrArray[old_map_block_index];
+                  }
+                  // Mark the block pointer in the old map array as "moved" (nullptr)
+                  // so that if we iterate oldMapArray later to delete un-moved blocks,
+                  // this one (which is now managed by newMap) is not accidentally deleted.
+                  oldMapPtrArray[old_map_block_index] = nullptr;
+              }
+          }
+
+          // After remapping active blocks, any remaining non-nullptr entries in oldMapPtrArray
+          // correspond to blocks that were allocated in the old map but are no longer needed
+          // (e.g., if the deque was sparse and map resizing changed which map slots are "active").
+          // These must be deallocated before deleting the oldMapPtrArray itself.
+          for (size_type k = 0; k < oldMapSize; ++k)
+          {
+              if (oldMapPtrArray[k] != nullptr)
+              {
+                  // This block was in the old map but wasn't transferred to a needed slot in the new map
+                  // (or wasn't part of the logical sequence of myData.mySize elements). Delete it.
+                  delete[] oldMapPtrArray[k];
+                  // oldMapPtrArray[k] = nullptr; // Not strictly necessary as oldMapPtrArray is about to be deleted
+              }
+          }
 
          delete[] myData.map;
       }
