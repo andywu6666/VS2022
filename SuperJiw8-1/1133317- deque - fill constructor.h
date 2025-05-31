@@ -354,15 +354,11 @@ public:
        {
            size_type newMapSize = 8;
            size_type blockSize = compDequeSize();
-           if (count > 0) {
-               //計算mapSize大小              
+           if (count > 0) {           
                while (((newMapSize - 1) * blockSize) < count) {
                    newMapSize *= 2;
                }
            }
-
-           //using MapPtr = typename ScaryVal::MapPtr;
-           //using MapPtr = Ty**;
 
            myData.map = new Ty * [newMapSize]();
 
