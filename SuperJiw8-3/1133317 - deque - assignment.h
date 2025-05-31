@@ -380,9 +380,7 @@ public:
          else
          {  // copy data from right to the current object
  
-             
-
-
+ 
             for (size_type i = 0; i < myData.mySize; ++i)
             {
                 if (myData.map[this->getBlock(myData.myOff + i)] == nullptr)

@@ -378,6 +378,15 @@ public:
          else
          {  // copy data from right to the current object
 
+             for (size_type i = 0; i < myData.mySize; ++i)
+             {
+                 if (myData.map[this->getBlock(myData.myOff + i)] == nullptr)
+                 {
+                     myData.map[this->getBlock(myData.myOff + i)] = new value_type[dequeSize];
+                 }
+                 myData.map[this->getBlock(myData.myOff + i)][(myData.myOff + i) % dequeSize] = right.myData.map[right.getBlock(right.myData.myOff + i)][(right.myData.myOff + i) % dequeSize];
+             }
+
 
 
          }
@@ -456,6 +465,17 @@ private:
 
       if( myData.mySize > 0 )
       {
+           size_type dequeSize = compDequeSize();
+        size_type oldOff = myData.myOff;
+
+        for (size_type i = 0; i < myData.mySize; ++i)
+        {
+            size_type oldIndex = oldOff + i;
+            size_type oldBlock = (oldIndex / dequeSize) % oldMapSize;
+            size_type newBlock = (oldIndex / dequeSize) % newMapSize;
+
+            newMap[newBlock] = myData.map[oldBlock];
+        }
 
 
 
