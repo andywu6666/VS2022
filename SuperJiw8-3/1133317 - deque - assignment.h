@@ -470,35 +470,20 @@ private:
       if( myData.mySize > 0 )
       {
           size_type dequeSize = compDequeSize();
-          value_type** const oldMapPtrArray = myData.map;
+          size_type oldOff = myData.myOff;
 
           for (size_type i = 0; i < myData.mySize; ++i)
           {
-              size_type current_logical_offset = myData.myOff + i;
+              size_type oldIndex = oldOff + i;
+              size_type oldBlock = (oldIndex / dequeSize) % oldMapSize;
+              size_type newBlock = (oldIndex / dequeSize) % newMapSize;
 
-              size_type old_map_block_index = (current_logical_offset / dequeSize) % oldMapSize;
-
-              size_type new_map_block_index = (current_logical_offset / dequeSize) % myData.mapSize;
-
-              if (oldMapPtrArray[old_map_block_index] != nullptr)
-              {
-                  if (newMap[new_map_block_index] == nullptr)
-                  {
-                      newMap[new_map_block_index] = oldMapPtrArray[old_map_block_index];
-                  }
-                  oldMapPtrArray[old_map_block_index] = nullptr;
-              }
+              newMap[newBlock] = myData.map[oldBlock];
           }
 
-          for (size_type k = 0; k < oldMapSize; ++k)
-          {
-              if (oldMapPtrArray[k] != nullptr)
-                  delete[] oldMapPtrArray[k];
 
-              
-          }
 
-         delete[] myData.map;
+          delete[] myData.map;
       }
 
       myData.map = newMap;
