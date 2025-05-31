@@ -375,23 +375,21 @@ public:
 
          if (right.myData.mySize == 0) {
              myData.myOff = 0;
-             for (size_type i = 0; i < myData.mySize; ++i) {
-                 if (myData.map[i] != nullptr) {
-                     delete[] myData.map[i];
-                     myData.map[i] = nullptr;
-                 }
-             }
+            
          }
          else
          {  // copy data from right to the current object
  
+             
+
+
             for (size_type i = 0; i < myData.mySize; ++i)
             {
-                if (myData.map[ (myData.myOff + i) / dequeSize % myData.mapSize] == nullptr)
+                if (myData.map[this->getBlock(myData.myOff + i)] == nullptr)
                  {
-                    myData.map[(myData.myOff + i) / dequeSize % myData.mapSize ] = new value_type[dequeSize];
+                    myData.map[this->getBlock(myData.myOff + i)] = new value_type[dequeSize];
                  }
-              myData.map[(myData.myOff + i) / dequeSize % myData.mapSize][(myData.myOff + i) % dequeSize] = right.myData.map[(right.myData.myOff + i) / dequeSize % right.myData.mapSize][(right.myData.myOff + i) % dequeSize];
+              myData.map[this->getBlock(myData.myOff + i)][(myData.myOff + i) % dequeSize] = right.myData.map[right.getBlock(right.myData.myOff + i)][(right.myData.myOff + i) % dequeSize];
             }
 
 
@@ -473,6 +471,7 @@ private:
       {
           size_type dequeSize = compDequeSize();
           value_type** const oldMapPtrArray = myData.map;
+
           for (size_type i = 0; i < myData.mySize; ++i)
           {
               size_type current_logical_offset = myData.myOff + i;
