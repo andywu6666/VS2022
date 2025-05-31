@@ -384,23 +384,15 @@ public:
          }
          else
          {  // copy data from right to the current object
-   size_type dequeSize = compDequeSize();
-   myData.myOff = (myData.myOff / dequeSize) * dequeSize; // align offset
-
-   size_type start = myData.myOff;
-   for (size_type i = 0; i < myData.mySize; ++i)
-   {
-      size_type block = getBlock(start + i);
-      size_type off = (start + i) % dequeSize;
-
-      size_type rBlock = right.getBlock(right.myData.myOff + i);
-      size_type rOff = (right.myData.myOff + i) % dequeSize;
-
-      if (myData.map[block] == nullptr)
-         myData.map[block] = new value_type[dequeSize];
-
-      myData.map[block][off] = right.myData.map[rBlock][rOff];
-   }
+ 
+            for (size_type i = 0; i < myData.mySize; ++i)
+            {
+                if (myData.map[ (myData.myOff + i) / dequeSize % myData.mapSize] == nullptr)
+                 {
+                    myData.map[(myData.myOff + i) / dequeSize % myData.mapSize ] = new value_type[dequeSize];
+                 }
+              myData.map[(myData.myOff + i) / dequeSize % myData.mapSize][(myData.myOff + i) % dequeSize] = right.myData.map[(right.myData.myOff + i) / dequeSize % right.myData.mapSize][(right.myData.myOff + i) % dequeSize];
+            }
 
 
          }
