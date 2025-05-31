@@ -412,7 +412,35 @@ public:
             myData.mapSize = 8;
          }
 
+         if (myData.myOff == 0)
+             myData.myOff = (myData.mapSize * dequeSize) - 1;
+         else
+         {
+             myData.myOff--;
+             if (myData.myOff > (myData.mapSize * dequeSize) - 1)
+                 myData.myOff = myData.myOff % (myData.mapSize * dequeSize);
+         }
 
+         for (size_type i = 0; i < off; i++)
+         {
+             size_type block = (myData.myOff + i) / dequeSize % myData.mapSize;
+             size_type pos = (myData.myOff + i) % dequeSize;
+             size_type plusBlock = (myData.myOff + i + 1) / dequeSize % myData.mapSize;
+             size_type plusPos = (myData.myOff + i + 1) % dequeSize;
+
+             if (myData.map[block] == nullptr)
+                 myData.map[block] = new value_type[dequeSize];
+
+             myData.map[block][pos] = myData.map[plusBlock][plusPos];
+         }
+
+         size_type leftBlock = (myData.myOff + off) / dequeSize % myData.mapSize;
+         size_type leftPos = (myData.myOff + off) % dequeSize;
+
+         if (myData.map[leftBlock] == nullptr)
+             myData.map[leftBlock] = new value_type[dequeSize];
+
+         myData.map[leftBlock][leftPos] = val;
 
       }
       else
@@ -424,7 +452,35 @@ public:
                myData.mapSize <= ( myData.mySize + dequeSize ) / dequeSize )
                doubleMapSize();
 
+            if (myData.myOff == 0)
+                myData.myOff = (myData.mapSize * dequeSize) - 1;
+            else
+            {
+                myData.myOff--;
+                if (myData.myOff > (myData.mapSize * dequeSize) - 1)
+                    myData.myOff = myData.myOff % (myData.mapSize * dequeSize);
+            }
 
+            for (size_type i = 0; i < off; i++)
+            {
+                size_type block = (myData.myOff + i) / dequeSize % myData.mapSize;
+                size_type pos = (myData.myOff + i) % dequeSize;
+                size_type plusBlock = (myData.myOff + i + 1) / dequeSize % myData.mapSize;
+                size_type plusPos = (myData.myOff + i + 1) % dequeSize;
+
+                if (myData.map[block] == nullptr)
+                    myData.map[block] = new value_type[dequeSize];
+
+                myData.map[block][pos] = myData.map[plusBlock][plusPos];
+            }
+
+            size_type leftBlock = (myData.myOff + off) / dequeSize % myData.mapSize;
+            size_type leftPos = (myData.myOff + off) % dequeSize;
+
+            if (myData.map[leftBlock] == nullptr)
+                myData.map[leftBlock] = new value_type[dequeSize];
+
+            myData.map[leftBlock][leftPos] = val;
 
          }
          else  // all elements after (and at) where move backward
@@ -433,7 +489,33 @@ public:
                myData.mapSize <= ( myData.mySize + dequeSize ) / dequeSize )
                doubleMapSize();
 
+            if ((myData.myOff + myData.mySize) % dequeSize == 0 &&
+                myData.mapSize <= (myData.mySize + dequeSize) / dequeSize)
+                doubleMapSize();
 
+            if (myData.myOff > myData.mapSize * dequeSize - 1)
+                myData.myOff = myData.myOff % (myData.mapSize * dequeSize);
+
+            for (size_type i = myData.mySize - 1; i >= off; i--)
+            {
+                size_type block = (myData.myOff + i) / dequeSize % myData.mapSize;
+                size_type pos = (myData.myOff + i) % dequeSize;
+
+                size_type plusBlock = (myData.myOff + i + 1) / dequeSize % myData.mapSize;
+                size_type plusPos = (myData.myOff + i + 1) % dequeSize;
+
+                if (myData.map[plusBlock] == nullptr)
+                    myData.map[plusBlock] = new value_type[dequeSize];
+
+                myData.map[plusBlock][plusPos] = myData.map[block][pos];
+            }
+            size_type leftBlock = (myData.myOff + off) / dequeSize % myData.mapSize;
+            size_type leftPos = (myData.myOff + off) % dequeSize;
+
+            if (myData.map[leftBlock] == nullptr)
+                myData.map[leftBlock] = new value_type[dequeSize];
+
+            myData.map[leftBlock][leftPos] = val;
 
          }
       }
@@ -476,6 +558,14 @@ private:
          myData.mapSize *= 2;
          value_type **newMap = new value_type * [ myData.mapSize ]();
 
+         size_type dequeSize = compDequeSize();
+         for (size_type i = 0; i < myData.mySize; i += dequeSize)
+         {
+             size_type oldBlock = (myData.myOff + i) / dequeSize % oldMapSize;
+             size_type newBlock = (myData.myOff + i) / dequeSize % myData.mySize;
+
+             newMap[newBlock] = myData.map[oldBlock];
+         }
 
 
          delete[] myData.map;

@@ -411,14 +411,24 @@ public:
          size_type off = static_cast< size_type >( where - begin() );
          if( off < myData.mySize / 2 ) // closer to front
          {
+             size_type dequeSize = compDequeSize();
 
+             for (iterator it = whereIt; it != begin(); )
+             {
+                 iterator prev = it - 1;
+                 *it = *prev;
+                 it--;
+             }
 
-
+             myData.myOff++;
          }
          else // closer to back
          {
-
-
+             for (iterator it = whereIt; it != end() - 1; it++)
+             {
+                 iterator next = it + 1;
+                 *it = *next;
+             }
 
          }
 
